@@ -1,8 +1,8 @@
-# Base Image node alpine
-FROM node:alpine
+# Base Image node bullseye (Debian-based)
+FROM node:18-bullseye
 
 # Install dependencies
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y \
     tzdata \
     ffmpeg \
     git \
@@ -10,24 +10,12 @@ RUN apk add --no-cache \
     python3 \
     graphicsmagick \
     sudo \
-    npm \
-    yarn \
     curl \
     bash \
-    # Additional dependencies for canvas
-    build-base \
-    g++ \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev \
-    pixman-dev \
-    pangomm-dev \
-    libjpeg-turbo-dev \
-    freetype-dev
+    libvips-dev
 
 # Clean up
-RUN rm -rf /var/cache/apk/*
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Clone the repository
 RUN git clone https://github.com/AstroAnalytics/XopBot /root/bot
@@ -39,7 +27,7 @@ WORKDIR /root/bot
 RUN npm cache clean --force && rm -rf node_modules
 
 # Install dependencies
-RUN npm install --build-from-source
+RUN npm install --unsafe-perm
 
 # Expose port
 EXPOSE 9000
