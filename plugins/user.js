@@ -9,7 +9,7 @@ bot(
   pattern: "anticall",
   fromMe: true,
   desc: "Detects calls and declines them.",
-  type: "owner",
+  type: "user",
  },
  async (message, args) => {
   try {
@@ -95,7 +95,7 @@ bot(
  {
   pattern: "vcf",
   desc: "Get Contacts of group members!",
-  category: "user",
+  type: "user",
  },
  async (message, params) => {
   try {

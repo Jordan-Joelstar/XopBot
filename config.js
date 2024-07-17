@@ -16,7 +16,7 @@ global.timezone =  process.env.TIME_ZONE || "Africa/Lagos";
 global.github = process.env.GITHUB || "https://github.com/Astropeda/Asta-Md";
 global.gurl = process.env.URL || "https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z";
 global.website = process.env.WEBSITE || "https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z";
-global.THUMB_IMAGE = process.env.THUMB_IMAGE || process.env.IMAGE || "https://avatars.githubusercontent.com/u/175747986?v=4&size=64";
+global.THUMB_IMAGE = process.env.THUMB_IMAGE || process.env.IMAGE || "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/lib/assets/logo.jpeg";
 global.devs = "2348039607375";
 global.sudo = process.env.SUDO || "2348039607375";
 global.owner = process.env.OWNER_NUMBER || "2348039607375";
