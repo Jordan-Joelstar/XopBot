@@ -1,6 +1,9 @@
 # Base Image node bullseye (Debian-based)
 FROM node:18-bullseye
-
+# Some Configs
+ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
+ENV npm_config_arch=x64
+ENV npm_config_platform=linux
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     tzdata \
