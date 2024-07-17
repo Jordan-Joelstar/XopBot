@@ -80,7 +80,7 @@ bot(
   try {
    const commits = await DB.syncgit();
    if (commits.total === 0) {
-    return await citel.reply(`*${Config.VERSION} is already up to date.*`);
+    return await citel.reply(`_Already up to date._`);
    }
 
    const update = await DB.sync();
