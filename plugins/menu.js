@@ -27,7 +27,7 @@ bot(
    const currentDate = message.date;
    const currentUser = message.sender.split("@")[0];
    let menuText = `
-╭══〔 ${config.botname || "xᴘᴏ ᴍᴅ"} 〕
+╭═「 ${config.botname || "xᴘᴏ ᴍᴅ"} 」
 ┃╭──────────────
 ┃│ ᴜsᴇʀ : ${currentUser}
 ┃│ ᴛɪᴍᴇ : ${currentTime}
