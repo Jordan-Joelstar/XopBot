@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { fetchJson, runtime } = require("../lib/index");
+const { fetchJson, runtime, Config } = require("../lib/index");
 const { bot } = require("../lib/plugins");
 const { groupdb } = require("../lib/schemes");
 const { tlang } = require("../lib/scraper");
