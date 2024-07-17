@@ -1,14 +1,25 @@
-# Node 16 LTS (buster-slim) as the base image
-FROM node:16-buster-slim
+# Base Image node alpine
+FROM node:alpine
 RUN apt-get update && apt-get install -y \
+    apk add --no-cache \
+    tzdata \
     ffmpeg \
     git \
+    imagemagick \
+    python3 \
+    graphicsmagick \
+    sudo \
+    npm \
+    yarn \
+    curl \
+    bash && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+RUN apk del curl && \
+    rm -rf /var/cache/apk/*
 RUN git clone https://github.com/AstroAnalytics/XopBot /root/bot
 WORKDIR /root/bot
-# Clean npm cache and remove existing node_modules
 RUN npm cache clean --force && rm -rf node_modules
 RUN npm install
-EXPOSE 3000
+EXPOSE 9000
 CMD ["npm", "start"]
