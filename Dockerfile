@@ -1,10 +1,8 @@
 # Base Image node bullseye (Debian-based)
-FROM node:18-bullseye
-# Some Configs
+FROM node:16-bullseye
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 ENV npm_config_arch=x64
 ENV npm_config_platform=linux
-# Install dependencies
 RUN apt-get update && apt-get install -y \
     tzdata \
     ffmpeg \
@@ -16,24 +14,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     bash \
     libvips-dev
-
-# Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Clone the repository
 RUN git clone https://github.com/AstroAnalytics/XopBot /root/bot
-
-# Set working directory
 WORKDIR /root/bot
-
-# Clean npm cache and remove existing node_modules
 RUN npm cache clean --force && rm -rf node_modules
-
-# Install dependencies
-RUN npm install --unsafe-perm
-
-# Expose port
+RUN npm install
 EXPOSE 9000
-
-# Start the application
 CMD ["npm", "start"]
