@@ -1,5 +1,5 @@
 const moment = require("moment-timezone");
-const { bot, updateProfilePicture, parsedJid } = require("../lib");
+const { bot, updateProfilePicture, parsedJid, tlang } = require("../lib");
 const messageTypes = ["imageMessage"];
 
 bot(
@@ -494,6 +494,126 @@ bot(
    await context.reply(waLink);
   } catch (error) {
    await context.error(`${error}\n\ncommand : mee`, error);
+  }
+ }
+);
+bot(
+ {
+  pattern: "newgc",
+  info: "Create New Group",
+  type: "whatsapp",
+ },
+ async (message, args, { smd, cmdname: cmd }) => {
+  try {
+   if (!message.isCreator) {
+    return message.reply(tlang().owner);
+   }
+   if (!args) {
+    return await message.reply("_Provide Name and Tag User!_");
+   }
+
+   let groupName = args;
+   let participants = [message.sender];
+   if (message.quoted) {
+    participants.push(message.quoted.sender);
+   }
+   if (message.mentionedJid && message.mentionedJid[0]) {
+    participants.push(...message.mentionedJid);
+    try {
+     mentionJids.forEach((mention) => {
+      var userId = mention.split("@")[0].trim();
+      groupName = groupName.replace(new RegExp("@" + userId, "g"), "");
+     });
+    } catch {}
+   }
+   const limitedGroupName = groupName.substring(0, 60);
+
+   const groupInfo = await message.bot.groupCreate(limitedGroupName, [...participants]);
+
+   if (groupInfo) {
+    let welcomeMessage = "_Welcome Sir!_";
+    let welcomeMsgSent = await message.bot.sendMessage(groupInfo.id, { text: welcomeMessage });
+    try {
+     var inviteCode = await message.bot.groupInviteCode(groupInfo.id);
+    } catch {
+     var inviteCode = false;
+    }
+    var inviteLink = "https://chat.whatsapp.com/" + inviteCode;
+    return await send(message, ("*_Hurray, New group created!!!_*\n" + (inviteCode ? "*_" + inviteLink + "_*" : "")).trim(), "", welcomeMsgSent);
+   } else {
+    await message.send("_Failed_");
+   }
+  } catch (error) {
+   await message.error(error + "\n\ncommand: " + cmd, error);
+  }
+ }
+);
+bot(
+ {
+  pattern: "join",
+  info: "joins group by link",
+  type: "whatsapp",
+  fromMe: true,
+ },
+ async (message, args) => {
+  try {
+   if (message.reply_message && message.reply_message.groupInvite) {
+    var joinResponse = await message.bot.groupAcceptInviteV4(message.chat, message.reply_message.msg);
+    if (joinResponse && joinResponse.includes("joined to:")) {
+     return await send(message, "*_Joined_*", {}, "", message);
+    }
+   }
+   let groupLink = args ? args : message.reply_text;
+   const groupPattern = /https:\/\/chat\.whatsapp\.com\/([^\s]+)/;
+   const match = groupLink.match(groupPattern);
+
+   if (!match) {
+    return await message.reply("*_Uhh Please, provide group link_*");
+   }
+   let groupId = match[1].trim();
+
+   await message.bot
+    .groupAcceptInvite(groupId)
+    .then((response) => send(message, "*_Joined_*", {}, "", message))
+    .catch((error) => message.send("*_Can't Join, Group Id not found!!_*"));
+  } catch (error) {
+   await message.error(error + "\n\ncommand: join", error);
+  }
+ }
+);
+
+bot(
+ {
+  pattern: "jidsgc",
+  desc: "Sends chat id of every groups.",
+  category: "whatsapp",
+ },
+ async (message, match, { cmdName }) => {
+  try {
+   if (!message.isCreator) {
+    return message.reply(tlang().owner);
+   }
+   let groups = await message.bot.groupFetchAllParticipating();
+   const groupList = Object.values(groups);
+
+   let response = "";
+   let showJids = false;
+   let showNames = false;
+   if (match.includes("jid")) {
+    showJids = true;
+   } else if (match.includes("name")) {
+    showNames = true;
+   }
+   await message.reply("Fetching " + (showJids ? "Only jids" : showNames ? "Only Names" : "Names and Jids") + " from " + groupList.length + " Groups");
+   await sleep(2000);
+   for (let group of groupList) {
+    response += showJids ? "" : "\n*Group:* " + group.subject + " ";
+    response += showNames ? "" : "\n*JID:* " + group.id + "\n";
+   }
+   return await message.send(response);
+  } catch (error) {
+   // Handle errors
+   await message.error(error + "\n\ncommand: " + cmdName, error);
   }
  }
 );
