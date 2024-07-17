@@ -13,7 +13,18 @@ RUN apk add --no-cache \
     npm \
     yarn \
     curl \
-    bash
+    bash \
+    # Additional dependencies for canvas
+    build-base \
+    g++ \
+    cairo-dev \
+    jpeg-dev \
+    pango-dev \
+    giflib-dev \
+    pixman-dev \
+    pangomm-dev \
+    libjpeg-turbo-dev \
+    freetype-dev
 
 # Clean up
 RUN rm -rf /var/cache/apk/*
@@ -28,7 +39,7 @@ WORKDIR /root/bot
 RUN npm cache clean --force && rm -rf node_modules
 
 # Install dependencies
-RUN npm install
+RUN npm install --build-from-source
 
 # Expose port
 EXPOSE 9000
