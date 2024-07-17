@@ -376,6 +376,8 @@ bot(
  }
 );
 
+const { profilePictureUrl } = require("@whiskeysockets/baileys");
+
 bot(
  {
   pattern: "getpp",
@@ -384,20 +386,31 @@ bot(
  },
  async (context) => {
   try {
+   // Determine the user JID (Jabber ID)
    const userJid = context.reply_message ? context.reply_message.sender : context.mentionedJid[0] || context.from;
-   const profilePicUrl = await context.bot.profilePictureUrl(userJid, "image").catch(() => "Profile Pic Not Fetched");
-   return await context.bot.sendMessage(
-    context.chat,
-    {
-     image: { url: profilePicUrl },
-    },
-    { quoted: context }
-   );
+
+   // Attempt to fetch the profile picture URL
+   const profilePicUrl = await getUserProfilePicture(userJid, context.bot);
+
+   // Send the profile picture to the chat
+   return await context.bot.sendMessage(context.chat, { image: { url: profilePicUrl } }, { quoted: context });
   } catch (error) {
-   await context.error(`${error}\n\ncommand : getpp`, error);
+   await context.error(`${error}\n\nCommand: getpp`, error);
   }
  }
 );
+
+async function getUserProfilePicture(jid, sock) {
+ try {
+  // Attempt to get the high-resolution picture
+  const ppUrl = await profilePictureUrl(jid, "image", sock);
+  return ppUrl;
+ } catch (error) {
+  console.error("Error fetching profile picture:", error);
+  // Return a default image URL if unable to fetch the profile picture
+  return "https://telegra.ph/file/93f1e7e8a1d7c4486df9e.jpg";
+ }
+}
 
 bot(
  {

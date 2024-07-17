@@ -1,4 +1,4 @@
-const { bot, prefix, bot_ } = require("../lib");
+const { bot, prefix, bot_, tlang } = require("../lib");
 
 let antiCallCountries = [];
 let antiCallUsers = {};
@@ -91,7 +91,7 @@ bot(
   }
  }
 );
-smd(
+bot(
  {
   pattern: "vcf",
   desc: "Get Contacts of group members!",
