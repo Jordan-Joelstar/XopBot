@@ -1,5 +1,5 @@
 /**
- * @module ExampleModule
+ * @module Imports
  *
  * This module provides various utility functions and classes for the application.
  *
@@ -15,3 +15,6 @@
  * @section exports
  * Exports functions and classes for use in other files.
  */
+
+const DB = require("./chats" || "./download" || "./group" || "./whatsapp");
+
