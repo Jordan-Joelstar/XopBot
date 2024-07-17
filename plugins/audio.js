@@ -3,9 +3,8 @@ const { exec } = require("child_process");
 const fs = require("fs");
 async function audioEditor(message, effect = "bass", prefix = "") {
  try {
-  // Check if the message has a quoted audio
   if (!message.quoted || !/audio/.test(message.quoted.mtype || message.mtype)) {
-   return await message.send("*_Uhh Dear, Reply to audio!!!_*");
+   return await message.send("_Reply Audio/Voice Note Only!_");
   }
 
   // Define the default filter
