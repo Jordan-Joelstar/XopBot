@@ -15,8 +15,8 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
    let ownerName = 'Unknown'
    if (context.metadata.owner) {
     try {
-     const ownerContact = await context.bot.contacts[context.metadata.owner]
-     ownerName = ownerContact ? ownerContact.name || ownerContact.verifiedName || context.metadata.owner.split('@')[0] : context.metadata.owner.split('@')[0]
+     const ownerContact = await context.bot.getContactById(context.metadata.owner)
+     ownerName = ownerContact.pushName || context.metadata.owner.split('@')[0]
     } catch (error) {
      console.log('Error fetching owner name:', error)
      ownerName = context.metadata.owner.split('@')[0]
@@ -42,8 +42,8 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
      context.metadata.participants
       .filter((p) => p.admin)
       .map(async (p) => {
-       const contact = await context.bot.contacts[p.id]
-       return contact ? contact.name || contact.verifiedName || p.id.split('@')[0] : p.id.split('@')[0]
+       const contact = await context.bot.getContactById(p.id)
+       return contact.pushName || p.id.split('@')[0]
       })
     )
     formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList.join(', ') || 'No admins')
@@ -51,15 +51,15 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
   }
 
   formattedMessage = formattedMessage
-   .replace(/@user|&user/gi, '@' + context.senderName)
-   .replace(/@name|&name/gi, context.senderName || '_')
+   .replace(/@user|&user/gi, context.senderName)
+   .replace(/@name|&name/gi, context.pushName || '_')
    .replace(/@time|&time/gi, context.time)
    .replace(/@date|&date/gi, context.date)
+   .replace(/@bot|&bot/gi, Config.botname)
    .replace(/@owner|&owner/gi, Config.ownername)
    .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, context.gurl || '')
    .replace(/@runtime|&runtime|@uptime|&uptime/gi, runtime(process.uptime()))
    .trim()
-
   try {
    const pickupLine = await fetchJson('https://api.popcat.xyz/pickuplines')
    formattedMessage = formattedMessage.replace(/@line|&line/gi, pickupLine.pickupline || '')

@@ -27,7 +27,7 @@ bot(
       let menuText = `
 ╭═「 ${config.botname || "xᴘᴏ ᴍᴅ"} 」
 ┃╭──────────────
-┃│ ᴜsᴇʀ : @${currentUser}
+┃│ ᴜsᴇʀ : ${currentUser}
 ┃│ ᴛɪᴍᴇ : ${currentTime}
 ┃│ ᴅᴀᴛᴇ : ${currentDate}
 ┃│ ʀᴀᴍ  : ${formatp(os.totalmem() - os.freemem())}
