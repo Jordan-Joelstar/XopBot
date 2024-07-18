@@ -25,7 +25,7 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
    .replace(/@bot|&bot/gi, Config.botname)
    .replace(/@owner|&owner/gi, Config.ownername)
    .replace(/@caption|&caption/gi, Config.caption)
-   .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, gurl)
+   .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, context.gurl || '')
    .replace(/@runtime|&runtime|@uptime|&uptime/gi, runtime(process.uptime()))
    .trim()
 
@@ -64,20 +64,16 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
     mentionedJid: mentionedJids,
    }
 
+   let profilePic
    if (/@pp/g.test(welcomeMessage)) {
-    return await context.send(
-     await context.getpp(),
-     {
-      caption: formattedMessage,
-      mentions: mentionedJids,
-      contextInfo: contextInfo,
-     },
-     'image',
-     buttons
-    )
+    profilePic = await context.getpp(context.sender)
    } else if (context.jid && /@gpp/g.test(welcomeMessage)) {
+    profilePic = await context.getpp(context.jid)
+   }
+
+   if (profilePic) {
     return await context.send(
-     await context.getpp(context.jid),
+     profilePic,
      {
       caption: formattedMessage,
       mentions: mentionedJids,
@@ -101,6 +97,7 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
   }
  } catch (error) {
   console.log(error)
+  return formattedMessage // Return the formatted message even if there's an error
  }
 }
 
