@@ -1,5 +1,5 @@
 const moment = require("moment-timezone");
-const { bot, updateProfilePicture, parsedJid, tlang, bot_ } = require("../lib");
+const { bot, updateProfilePicture, parsedJid, tlang, bot_, userdb, tlang, parsedJid, sleep, Config, prefix } = require("../lib");
 const messageTypes = ["imageMessage"];
 
 bot(
@@ -682,3 +682,108 @@ bot({ on: "text" }, async (message) => {
   }
  }
 });
+smd(
+ {
+  pattern: "permit",
+  fromMe: true,
+  desc: "Enable/disable PM permit",
+  type: "whatsapp",
+ },
+ async (message, input, { cmdName }) => {
+  try {
+   const botData = (await bot_.findOne({ id: `bot_${message.user}` })) || (await bot_.new({ id: `bot_${message.user}` }));
+   if (!input) {
+    const status = botData.permit ? "enabled" : "disabled";
+    return await message.send(`*PmPermit Currently ${status}!!!*\n*Set to:* \`\`\`${botData.values.toUpperCase()}\`\`\`\n\n*Available Cmds:* \`\`\`\n${prefix}${cmdName} off\n${prefix}${cmdName} on | all\n${prefix}${cmdName} on | 212,91\`\`\`\n\n${Config.caption}`);
+   }
+
+   const [command, values] = input.toLowerCase().trim().split("|");
+   const permittedNumbers = values
+    ? values.startsWith("all")
+      ? "all"
+      : values
+         .split(",")
+         .map((num) => parseInt(num))
+         .filter((num) => !isNaN(num))
+         .join(",")
+    : botData.permit_values;
+
+   if (["on", "enable", "act"].includes(command)) {
+    if (botData.permit && botData.permit_values === permittedNumbers) {
+     return await message.send("*_Already Enabled_*");
+    }
+    await bot_.updateOne({ id: `bot_${message.user}` }, { permit: true, permit_values: permittedNumbers });
+    return await message.send(`*_PmPermit ${botData.permit ? "Updated" : "Activated"}_*\n*_Now ${permittedNumbers === "all" ? "everyone" : permittedNumbers} need permission for PM_*`);
+   } else if (["off", "disable"].includes(command)) {
+    if (!botData.permit) {
+     return await message.send("*_Already Disabled_*");
+    }
+    await bot_.updateOne({ id: `bot_${message.user}` }, { permit: false });
+    return await message.send("*_Disabled Now!_*");
+   } else {
+    return await message.bot.sendMessage(message.chat, {
+     text: `*PmPermit Currently ${botData.permit ? "enabled" : "disabled"}!*`,
+    });
+   }
+  } catch (error) {
+   await message.error(`${error}\n\nCommand: ${cmdName}`, error);
+  }
+ }
+);
+
+bot(
+ {
+  pattern: "approve",
+  fromMe: true,
+  desc: "Approves that person for PM",
+  type: "whatsapp",
+ },
+ async (message) => {
+  try {
+   const botData = (await bot_.findOne({ id: `bot_${message.user}` })) || (await bot_.new({ id: `bot_${message.user}` }));
+   if (!botData.permit) {
+    return await message.sendMessage(message.chat, {
+     text: "*_Enable Permit First!_*",
+    });
+   }
+   if (!message.quoted) {
+    return message.reply("_Reply A User_");
+   }
+   const userData = (await userdb.findOne({ id: message.quoted.sender })) || (await userdb.new({ id: message.quoted.sender }));
+   if (userData.permit === "true") {
+    return message.reply(`*_ ${userData.name || "User"} already has permission for PM._*`);
+   }
+   await userdb.updateOne({ id: message.quoted.sender }, { permit: "true", times: 0 });
+   return message.send(`*_Permitted ${userData.name || "User"} for PM._*`);
+  } catch (error) {
+   return await message.error(`${error}\n\nCommand: approve`, error);
+  }
+ }
+);
+
+bot(
+ {
+  pattern: "disapprove",
+  fromMe: true,
+  desc: "Disapproves user for PM.",
+  type: "whatsapp",
+ },
+ async (message) => {
+  try {
+   const botData = (await bot_.findOne({ id: `bot_${message.user}` })) || (await bot_.new({ id: `bot_${message.user}` }));
+   if (!botData.permit) {
+    return await message.sendMessage(message.chat, {
+     text: "*_Permit Disabled, Enable First!_*",
+    });
+   }
+   if (!message.quoted) {
+    return message.send("*Please reply to a user for action.*");
+   }
+   const userData = (await userdb.findOne({ id: message.quoted.sender })) || (await userdb.new({ id: message.quoted.sender }));
+   await userdb.updateOne({ id: message.quoted.sender }, { permit: "false" });
+   return message.send(`*_Revoked permission of ${userData.name || "User"} for PM._*`);
+  } catch (error) {
+   await message.error(`${error}\nCommand: disapprove`, error);
+  }
+ }
+);
