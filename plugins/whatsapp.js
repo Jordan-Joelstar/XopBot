@@ -40,7 +40,7 @@ bot(
  {
   pattern: 'pp',
   desc: 'Set profile picture',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message) => {
@@ -60,7 +60,7 @@ bot(
  {
   pattern: 'fullpp',
   desc: 'Set full screen profile picture',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message) => {
@@ -80,7 +80,7 @@ bot(
  {
   pattern: 'rpp',
   desc: 'Remove profile picture',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message) => {
@@ -97,7 +97,7 @@ bot(
  {
   pattern: 'bio',
   desc: 'Update profile status of WhatsApp',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message, text) => {
@@ -117,7 +117,7 @@ bot(
  {
   pattern: 'ptv',
   desc: 'Send ptv Message of video',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {
@@ -138,7 +138,7 @@ bot(
  {
   pattern: 'quoted',
   desc: 'Get reply Message from Replied Message',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {
@@ -160,7 +160,7 @@ bot(
  {
   pattern: 'blocked',
   desc: 'Get list of all Blocked Numbers',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message) => {
@@ -184,7 +184,7 @@ bot(
 bot(
  {
   pattern: 'chats',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   desc: 'Finds info about personal chats',
  },
  async (message, _, { store }) => {
@@ -206,7 +206,7 @@ bot(
 bot(
  {
   pattern: 'groups',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   desc: 'Finds info about all active groups',
  },
  async (message, _, { store, client }) => {
@@ -230,7 +230,7 @@ bot(
  {
   pattern: 'vcard',
   desc: 'Create Contact by given name.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, name) => {
   try {
@@ -263,7 +263,7 @@ bot(
   pattern: 'edit',
   fromMe: true,
   desc: 'Edit message that was sent by bot',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, text) => {
   try {
@@ -285,7 +285,7 @@ bot(
  {
   pattern: 'forward',
   desc: 'Forward your messages to a jid',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, jidString) => {
   try {
@@ -310,7 +310,7 @@ bot(
   pattern: 'block',
   info: 'Blocks a person',
   fromMe: true,
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {
@@ -337,7 +337,7 @@ bot(
  {
   pattern: 'unblock',
   info: 'Unblocks a user.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message) => {
@@ -362,7 +362,7 @@ bot(
  {
   pattern: 'vv',
   desc: 'Download viewOnce message.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, query) => {
   try {
@@ -402,7 +402,7 @@ bot(
  {
   pattern: 'jid',
   desc: 'Get JID of all users in a group.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async ({ jid: groupJid, reply: sendReply, quoted: quotedMessage }) => {
   const userJid = quotedMessage ? quotedMessage.sender : groupJid
@@ -417,7 +417,7 @@ bot(
  {
   pattern: 'getpp',
   desc: 'Get profile picture for given user',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (context) => {
   try {
@@ -451,7 +451,7 @@ bot(
  {
   pattern: 'about',
   desc: 'Get information about a user.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (context) => {
   try {
@@ -504,7 +504,7 @@ bot(
  {
   pattern: 'wa',
   desc: 'Get wa.me link for quoted or mentioned user.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (context) => {
   try {
@@ -521,7 +521,7 @@ bot(
  {
   pattern: 'wame',
   desc: 'Get wa.me link for the user.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (context) => {
   try {
@@ -536,7 +536,7 @@ bot(
  {
   pattern: 'newgc',
   info: 'Create New Group',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, args, { smd, cmdname: cmd }) => {
   try {
@@ -587,7 +587,7 @@ bot(
  {
   pattern: 'join',
   info: 'joins group by link',
-  type: 'whatsapp',
+  type: 'WhatsApp',
   fromMe: true,
  },
  async (message, args) => {
@@ -619,9 +619,9 @@ bot(
 
 bot(
  {
-  pattern: 'jidsgc',
+  pattern: 'gcjids',
   desc: 'Sends chat id of every groups.',
-  category: 'whatsapp',
+  category: 'WhatsApp',
  },
  async (message, match, { cmdName }) => {
   try {
@@ -721,7 +721,7 @@ bot(
   pattern: 'permit',
   fromMe: true,
   desc: 'Enable/disable PM permit',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message, input, { cmdName }) => {
   try {
@@ -769,7 +769,7 @@ bot(
   pattern: 'approve',
   fromMe: true,
   desc: 'Approves that person for PM',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {
@@ -799,7 +799,7 @@ bot(
   pattern: 'disapprove',
   fromMe: true,
   desc: 'Disapproves user for PM.',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {
@@ -824,7 +824,7 @@ bot(
  {
   pattern: 'save',
   desc: 'Save whatsapp status',
-  type: 'whatsapp',
+  type: 'WhatsApp',
  },
  async (message) => {
   try {

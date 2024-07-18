@@ -1539,7 +1539,7 @@ bot(
  {
   pattern: 'areact',
   desc: 'enable/disable auto reaction',
-  category: 'whatsapp',
+  category: 'WhatsApp',
  },
  async (message, text) => {
   try {
