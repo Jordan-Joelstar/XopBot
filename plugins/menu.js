@@ -23,7 +23,7 @@ bot(
 
       const currentTime = message.time;
       const currentDate = message.date;
-      const currentUser = message.sender;
+      const currentUser = message.pushName;
       let menuText = `
 ╭═「 ${config.botname || "xᴘᴏ ᴍᴅ"} 」
 ┃╭──────────────
