@@ -178,7 +178,7 @@ const {
     fromMe: true,
     desc: "warn a user!",
     category: "general",
-    filename: __filename,
+    
     use: " < USER >"
   }, async (_0x302c94, _0x4799a5) => {
     try {
@@ -237,7 +237,7 @@ const {
     pattern: "resetwarn",
     desc: "create paste of text.",
     category: "general",
-    filename: __filename,
+    
     use: " user "
   }, async (_0x280072, _0x1e4563) => {
     try {
@@ -1172,7 +1172,7 @@ const {
     pattern: "antiword",
     desc: "Detects words from chat,and delete/warn senders.",
     category: "group",
-    filename: __filename,
+    
     use: "< action | words >"
   }, async (_0x4ff73f, _0x41e8ca, {
     cmdName: _0xf9ed5e

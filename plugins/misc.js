@@ -1,8 +1,9 @@
-const { bot, fancytext } = require('../lib')
-const Config = require('../config')
+const { bot, fancytext, runtime, formatp, prefix, } = require('../lib')
+const config = require('../config')
 const axios = require('axios')
-const astro_patch = require('../lib/plugins')
-const events = astro_patch
+const os = require('os')
+const speed = require('performance-now')
+const { URLSearchParams } = require('url');
 bot(
  {
   pattern: 'alive',
@@ -77,168 +78,386 @@ bot(
  }
 )
 
-astro_patch.cmd(
+bot(
  {
   pattern: 'list',
-  desc: 'list menu',
+  desc: 'List menu',
   category: 'general',
-  react: '🥀',
  },
- async (_0x1d5ddc) => {
+ async (context) => {
   try {
-   const { commands: _0x7cfe13 } = require('../lib')
-   let _0x95885d = '\n\t*ᴀsᴛᴀ ᴍᴅ ᴄᴏᴍᴍᴀɴᴅs ɪɴғᴏ*  \n'
-   for (let _0x2bd72c = 0; _0x2bd72c < _0x7cfe13.length; _0x2bd72c++) {
-    if (_0x7cfe13[_0x2bd72c].pattern == undefined) {
-     continue
+   const { commands } = require('../lib')
+   let commandInfo = '\n\t*ᴀsᴛᴀ ᴍᴅ ᴄᴏᴍᴍᴀɴᴅs ɪɴғᴏ*\n'
+   commands.forEach((command, index) => {
+    if (command.pattern) {
+     commandInfo += `*${index + 1} ${fancytext(command.pattern, 1)}*\n`
+     commandInfo += `  ${fancytext(command.desc, 1)}\n`
     }
-    _0x95885d += '*' + (_0x2bd72c + 1) + ' ' + fancytext(_0x7cfe13[_0x2bd72c].pattern, 1) + '*\n'
-    _0x95885d += '  ' + fancytext(_0x7cfe13[_0x2bd72c].desc, 1) + '\n'
-   }
-   return await _0x1d5ddc.sendUi(_0x1d5ddc.chat, {
-    caption: _0x95885d + Config.caption,
    })
-  } catch (_0x3e730d) {
-   await _0x1d5ddc.error(_0x3e730d + '\nCommand:list', _0x3e730d)
+   return await context.sendUi(context.chat, {
+    caption: commandInfo + config.caption,
+   })
+  } catch (error) {
+   await context.error(error + '\nCommand: list', error)
   }
  }
 )
 
-astro_patch.smd(
+bot(
  {
   pattern: 'owner',
-  desc: 'To check ping',
+  desc: 'Show owner contact',
   category: 'user',
-  filename: __filename,
  },
- async (_0x563719) => {
+ async (context) => {
   try {
-   const _0x389599 = 'BEGIN:VCARD\nVERSION:3.0\nFN:' + Config.ownername + '\nORG:;\nTEL;type=CELL;type=VOICE;waid=' + global.owner?.split(',')[0] + ':+' + global.owner?.split(',')[0] + '\nEND:VCARD'
-   let _0x140248 = {
+   const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${config.ownername}\nORG:;\nTEL;type=CELL;type=VOICE;waid=${global.owner?.split(',')[0]}:+${global.owner?.split(',')[0]}\nEND:VCARD`
+   const contactInfo = {
     contacts: {
-     displayName: Config.ownername,
-     contacts: [
-      {
-       vcard: _0x389599,
-      },
-     ],
+     displayName: config.ownername,
+     contacts: [{ vcard }],
     },
     contextInfo: {
      externalAdReply: {
-      title: Config.ownername,
+      title: config.ownername,
       body: 'Touch here.',
       renderLargerThumbnail: true,
-      thumbnailUrl: '',
       thumbnail: log0,
       mediaType: 1,
-      mediaUrl: '',
-      sourceUrl: 'https://wa.me/+' + global.owner?.split(',')[0] + '?text=Hii+' + Config.ownername,
+      sourceUrl: `https://wa.me/+${global.owner?.split(',')[0]}?text=Hii+${config.ownername}`,
      },
     },
    }
-   return await _0x563719.sendMessage(_0x563719.jid, _0x140248, {
-    quoted: _0x563719,
-   })
-  } catch (_0x26ce8b) {
-   await _0x563719.error(_0x26ce8b + '\nCommand:owner', _0x26ce8b)
+   return await context.sendMessage(context.jid, contactInfo, { quoted: context })
+  } catch (error) {
+   await context.error(error + '\nCommand: owner', error)
   }
  }
 )
-astro_patch.smd(
+
+bot(
  {
   pattern: 'ping',
-  desc: 'To check ping',
+  desc: 'Check ping',
   category: 'user',
-  filename: __filename,
  },
  async (context) => {
   const startTime = new Date().getTime()
   const { key: messageKey } = await context.reply('*hmm...*')
   const endTime = new Date().getTime()
   const pingTime = endTime - startTime
-  await context.send(`*ʟᴀᴛᴇɴᴄʏ: ${pingTime} ᴍs*`, { edit: messageKey }, '', context)
+  await context.send(`*ʟᴀᴛᴇɴᴄʏ: ${pingTime} ms*`, { edit: messageKey }, '', context)
  }
 )
-astro_patch.cmd(
+
+bot(
  {
   pattern: 'setcmd',
-  desc: 'To check ping',
+  desc: 'Set command alias',
   category: 'user',
   fromMe: true,
-  filename: __filename,
  },
- async (_0x5d887, _0x291296, { Void: _0x43ee74 }) => {
+ async (context, message, { Void }) => {
   try {
-   if (!_0x291296) {
-    return await _0x5d887.send('*_Please provide cmd name by replying a Sticker_*')
+   if (!message) {
+    return await context.send('*_Please provide cmd name by replying to a Sticker_*')
    }
-   let _0x584a9e = _0x291296.split(',')
-   var _0x5b0dfd
-   var _0x3be11d
-   let _0x17bd8a = false
-   if (_0x5d887.quoted) {
-    let _0x1f29ea = _0x5d887.quoted.mtype
-    if (_0x1f29ea == 'stickerMessage' && _0x291296) {
-     _0x17bd8a = true
-     _0x5b0dfd = _0x291296.split(' ')[0]
-     _0x3be11d = 'sticker-' + _0x5d887.quoted.msg.fileSha256
-    }
+   const [newName, cmdName] = message.split(',').map((item) => item.trim().toLowerCase())
+   if (!newName || !cmdName) {
+    return await context.send('*_Please provide both new and old command names_*')
    }
-   if (!_0x17bd8a && _0x584a9e.length > 1) {
-    _0x3be11d = _0x584a9e[0].trim().toLowerCase()
-    _0x5b0dfd = _0x584a9e[1].trim().toLowerCase()
-   } else if (!_0x17bd8a) {
-    return await _0x5d887.send('*_Uhh Dear, Give Cmd With New Name_*\n*Eg: _.setcmd New_Name, Cmd_Name_*')
+   if (global.setCmdAlias[newName]) {
+    return await context.send(`*_"${newName}" is already set for "${global.setCmdAlias[newName]}" cmd, please try another name_*`)
    }
-   if (_0x3be11d.length < 1) {
-    return await _0x5d887.reply('*_Uhh Please, Provide New_Cmd Name First_*')
-   }
-   if (global.setCmdAlias[_0x3be11d]) {
-    return await _0x5d887.send('*_"' + (_0x17bd8a ? 'Given Sticker' : _0x3be11d) + '" Already set for "' + global.setCmdAlias[_0x3be11d] + '" Cmd, Please try another ' + (_0x17bd8a ? 'Sticker' : 'Name') + '_*')
-   }
-   const _0x8e739e = astro_patch.commands.find((_0xd9686c) => _0xd9686c.pattern === _0x5b0dfd) || astro_patch.commands.find((_0x31fef3) => _0x31fef3.alias && _0x31fef3.alias.includes(_0x5b0dfd))
-   if (_0x8e739e) {
-    global.setCmdAlias[_0x3be11d] = _0x8e739e.pattern
-    return await _0x5d887.send('*_Cmd "' + global.setCmdAlias[_0x3be11d] + '" Succesfully set to "' + (_0x17bd8a ? 'Sticker' : _0x3be11d) + '"._*\n*_These all names are reset, If bot restart_*')
+   const existingCmd = bot.commands.find((cmd) => cmd.pattern === cmdName || (cmd.alias && cmd.alias.includes(cmdName)))
+   if (existingCmd) {
+    global.setCmdAlias[newName] = existingCmd.pattern
+    return await context.send(`*_Command "${existingCmd.pattern}" successfully set to "${newName}"._*`)
    } else {
-    return await _0x5d887.send('*_Provided Cmd( ' + _0x5b0dfd + ') not found in bot cmds. Please Provide Valid cmd Name_*')
+    return await context.send('*_Provided command not found. Please provide a valid command name_*')
    }
-  } catch (_0x13e052) {
-   await _0x5d887.error(_0x13e052 + '\nCommand:setcmd', _0x13e052)
+  } catch (error) {
+   await context.error(error + '\nCommand: setcmd', error)
   }
  }
 )
-astro_patch.cmd(
+
+bot(
  {
   pattern: 'delcmd',
-  desc: 'To check ping',
+  desc: 'Delete command alias',
   category: 'user',
   fromMe: true,
-  filename: __filename,
  },
- async (_0xcfb3ed, _0x5c72db, { Void: _0x5c00fc }) => {
+ async (context, message, { Void }) => {
   try {
-   let _0xf7499f = _0x5c72db ? _0x5c72db.split(' ')[0].trim().toLowerCase() : ''
-   let _0x5dd184 = false
-   if (_0xcfb3ed.quoted) {
-    if (_0xcfb3ed.quoted.mtype == 'stickerMessage') {
-     _0x5dd184 = true
-     _0xf7499f = 'sticker-' + _0xcfb3ed.quoted.msg.fileSha256
-    } else if (!_0x5c72db) {
-     return await _0xcfb3ed.send('*_Please reply to a Sticker that set for a Cmd_*')
-    }
-   } else if (!_0x5c72db) {
-    return await _0xcfb3ed.send('*_Uhh Dear, provide Name that set to a cmd_*\n*Eg: _.delcmd Cmd_Name_*')
+   const cmdName = message ? message.split(' ')[0].trim().toLowerCase() : ''
+   if (!cmdName) {
+    return await context.send('*_Please provide the name of the command to delete_*')
    }
-   if (global.setCmdAlias[_0xf7499f]) {
-    await _0xcfb3ed.send('*_"' + (_0x5dd184 ? 'Given Sticker' : _0xf7499f) + '" deleted Succesfully at "' + global.setCmdAlias[_0xf7499f] + '" cmd_*')
-    delete global.setCmdAlias[_0xf7499f]
-    return
+   if (global.setCmdAlias[cmdName]) {
+    await context.send(`*_"${cmdName}" deleted successfully from "${global.setCmdAlias[cmdName]}" command_*`)
+    delete global.setCmdAlias[cmdName]
    } else {
-    return await _0xcfb3ed.send('*_"' + (_0x5dd184 ? 'Given Sticker' : _0xf7499f) + '" not Set for any cmd._*\n *_Please Provide Valid ' + (_0x5dd184 ? 'Sticker' : 'cmd Name') + ' to delete_*')
+    return await context.send(`*_"${cmdName}" not set for any command. Please provide a valid name to delete_*`)
    }
-  } catch (_0x2252fb) {
-   await _0xcfb3ed.error(_0x2252fb + '\nCommand:delcmd', _0x2252fb)
+  } catch (error) {
+   await context.error(error + '\nCommand: delcmd', error)
   }
  }
 )
+bot(
+ {
+  cmdname: 'ping2',
+  alias: ['botstatus', 'statusbot', 'p2'],
+  type: 'misc',
+  info: 'Get random poetry lines',
+ },
+ async (context) => {
+  try {
+   const memoryUsage = process.memoryUsage()
+   const cpuInfo = os.cpus().map((cpu) => {
+    cpu.total = Object.values(cpu.times).reduce((total, time) => total + time, 0)
+    return cpu
+   })
+
+   const totalCpuUsage = cpuInfo.reduce(
+    (acc, cpu, _, { length }) => {
+     acc.total += cpu.total
+     acc.speed += cpu.speed / length
+     acc.times.user += cpu.times.user
+     acc.times.nice += cpu.times.nice
+     acc.times.sys += cpu.times.sys
+     acc.times.idle += cpu.times.idle
+     acc.times.irq += cpu.times.irq
+     return acc
+    },
+    {
+     speed: 0,
+     total: 0,
+     times: { user: 0, nice: 0, sys: 0, idle: 0, irq: 0 },
+    }
+   )
+
+   const startSpeed = speed()
+   const endSpeed = speed()
+   const responseTime = endSpeed - startSpeed
+
+   const startTime = performance.now()
+   const endTime = performance.now()
+   const executionTime = endTime - startTime
+
+   const response = `
+  Response Speed: ${responseTime.toFixed(4)} seconds
+  Execution Time: ${executionTime.toFixed(2)} milliseconds
+  
+  Runtime: ${runtime(process.uptime())}
+  
+  *Server Info*
+  RAM: ${formatp(os.totalmem() - os.freemem())} / ${formatp(os.totalmem())}
+  
+  _NodeJS Memory Usage_
+  ${Object.keys(memoryUsage)
+   .map((key) => `${key.padEnd(20)}: ${formatp(memoryUsage[key])}`)
+   .join('\n')}
+  
+  ${
+   cpuInfo[0]
+    ? `_Total CPU Usage_
+  ${cpuInfo[0].model.trim()} (${totalCpuUsage.speed.toFixed(2)} MHz)
+  ${Object.keys(totalCpuUsage.times)
+   .map((key) => `- *${key}* : ${((totalCpuUsage.times[key] * 100) / totalCpuUsage.total).toFixed(2)}%`)
+   .join('\n')}`
+    : ''
+  }
+  `.trim()
+
+   context.reply(response)
+  } catch (error) {
+   await context.error(error + '\n\nCommand: ping2', error, false)
+  }
+ }
+)
+bot(
+ {
+  pattern: 'setcap',
+  desc: 'Set caption for replied message',
+  category: 'misc',
+ },
+ async (context, text) => {
+  try {
+   const message = context.reply_message
+   if (!message || !text) {
+    return await context.reply(message ? '*Please provide text to set caption!*' : '*Please reply to a message with caption | filename*')
+   }
+
+   if (message.image || message.video || message.mtype.includes('document')) {
+    const [captionText, fileNameText] = text.split('|').map((part) => part.trim())
+    const caption = message.mtype.includes('document') ? captionText : text
+    const fileName = fileNameText || 'null'
+
+    message.message[message.mtype].caption = caption
+    message.message[message.mtype].fileName = fileName
+    await context.bot.copyNForward(context.chat, message)
+   } else {
+    return await context.reply('Please reply to an audio/video/document message.')
+   }
+  } catch (error) {
+   await context.error(`Error: ${error}\n\nCommand: caption`, error, false)
+  }
+ }
+)
+
+bot(
+ {
+  pattern: 'todoc',
+  desc: 'Send document for replied image/video message',
+  category: 'misc',
+ },
+ async (context, text) => {
+  try {
+   const message = context.image || context.video ? context : context.reply_message && (context.reply_message.image || context.reply_message.video) ? context.reply_message : false
+
+   if (!message) {
+    return await context.reply('_Reply to an image/video message!_')
+   }
+
+   if (!text) {
+    return await context.reply('_Need fileName, Example: document asta | caption_')
+   }
+
+   const mediaPath = await context.bot.downloadAndSaveMediaMessage(message)
+   const separator = text.includes(':') ? ':' : text.includes(';') ? ';' : '|'
+   const [fileName, caption] = text.split(separator).map((part) => part.trim())
+   const fileType = message.image ? 'jpg' : 'mp4'
+   const captionText = ['copy', 'default', 'old', 'reply'].includes(caption) ? message.text : caption
+
+   if (mediaPath) {
+    context.bot.sendMessage(context.chat, {
+     document: { url: mediaPath },
+     mimetype: message.mimetype,
+     fileName: `${fileName}.${fileType}`,
+     caption: captionText,
+    })
+   } else {
+    context.reply('*Request Denied!*')
+   }
+  } catch (error) {
+   await context.error(`Error: ${error}\n\nCommand: todoc`, error, false)
+  }
+ }
+)
+
+bot(
+ {
+  pattern: 'tovv',
+  desc: 'Send view-once for replied image/video message',
+  category: 'misc',
+ },
+ async (context, caption) => {
+  try {
+   const message = context.image || context.video ? context : context.reply_message && (context.reply_message.image || context.reply_message.video) ? context.reply_message : false
+
+   if (!message) {
+    return await context.reply('_Reply to image/video with caption!_')
+   }
+
+   const mediaPath = await context.bot.downloadAndSaveMediaMessage(message)
+   const mediaType = message.image ? 'image' : 'video'
+
+   if (mediaPath) {
+    context.bot.sendMessage(
+     context.chat,
+     {
+      [mediaType]: { url: mediaPath },
+      caption: caption,
+      mimetype: message.mimetype,
+      fileLength: '99999999',
+      viewOnce: true,
+     },
+     { quoted: message }
+    )
+   } else {
+    context.reply('*Request Denied!*')
+   }
+  } catch (error) {
+   await context.error(`Error: ${error}\n\nCommand: tovv`, error, false)
+  }
+ }
+)
+
+bot({
+  pattern: "ip",
+  type: "misc",
+  info: "Get the bot's IP address"
+}, async (context) => {
+  try {
+    const { data: ipAddress } = await axios.get("https://api.ipify.org/");
+    const responseMessage = ipAddress 
+      ? `*Bot's IP address is: _${ipAddress}_*` 
+      : "_No response from server!_";
+    context.send(responseMessage);
+  } catch (error) {
+    await context.error(`Error: ${error}\n\nCommand: myip`, error, false);
+  }
+});
+
+const captureScreenshot = (url, device = "desktop") => {
+  return new Promise((resolve, reject) => {
+    const screenshotApiUrl = "https://www.screenshotmachine.com/capture.php";
+    const requestData = {
+      url,
+      device,
+      cacheLimit: 0
+    };
+
+    axios.post(screenshotApiUrl, new URLSearchParams(requestData), {
+      headers: {
+        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      }
+    })
+    .then(response => {
+      const cookies = response.headers["set-cookie"];
+      if (response.data.status === "success") {
+        axios.get(`https://www.screenshotmachine.com/${response.data.link}`, {
+          headers: { cookie: cookies.join("") },
+          responseType: "arraybuffer"
+        })
+        .then(({ data }) => {
+          resolve({ status: 200, result: data });
+        });
+      } else {
+        reject({
+          status: 404,
+          statusText: "Link Error",
+          message: response.data
+        });
+      }
+    })
+    .catch(reject);
+  });
+};
+
+bot({
+  cmdname: "ss",
+  type: "misc",
+  info: "Get a screenshot of a webpage"
+}, async (context, args) => {
+  try {
+    const url = args.split(" ")[0].trim();
+    if (!url) {
+      return await context.reply(`*Need URL! Use ${prefix}ss https://github.com/Astropeda/Asta-Md*`);
+    }
+
+    const screenshotResponse = await captureScreenshot(url);
+    if (screenshotResponse.status === 200) {
+      return await context.send(screenshotResponse.result, {
+        caption: config.caption
+      }, "amdimg", context);
+    } else {
+      await context.send("_No response from server!_");
+    }
+  } catch (error) {
+    await context.error(`Error: ${error}\n\nCommand: ss`, error, "*Request Denied!*");
+  }
+});

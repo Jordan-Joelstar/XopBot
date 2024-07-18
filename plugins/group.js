@@ -396,7 +396,7 @@ bot(
   pattern: 'diff',
   desc: 'Get difference of participants in two groups',
   category: 'owner',
-  filename: __filename,
+  
  },
  async (context, text) => {
   try {
@@ -447,7 +447,7 @@ bot(
   pattern: 'invite',
   desc: 'Get group link.',
   category: 'group',
-  filename: __filename,
+  
  },
  async (context) => {
   try {
@@ -469,7 +469,7 @@ bot(
   pattern: 'revoke',
   desc: 'Revoke group link.',
   category: 'group',
-  filename: __filename,
+  
  },
  async (context) => {
   try {
@@ -490,7 +490,7 @@ bot(
   pattern: 'tagall',
   desc: 'Tags every person of group.',
   category: 'group',
-  filename: __filename,
+  
  },
  async (context, message) => {
   try {

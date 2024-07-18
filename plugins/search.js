@@ -217,7 +217,7 @@ smd(
   desc: "download mp4 from url.",
   category: "search",
   use: "<package name>",
-  filename: __filename,
+  
  },
  async (message, match) => {
   try {
@@ -240,7 +240,7 @@ smd(
   category: "search",
   desc: "Sends info of given query from Google Search.",
   use: "<text>",
-  filename: __filename,
+  
  },
  async (message, text) => {
   try {
@@ -272,7 +272,7 @@ smd(
   category: "search",
   desc: "Sends info of given query from Google Search.",
   use: "<text>",
-  filename: __filename,
+  
  },
  async (message, text) => {
   try {
@@ -366,7 +366,7 @@ smd(
   category: "search",
   desc: "Searches Image on Google",
   use: "<text>",
-  filename: __filename,
+  
  },
  async (message, match) => {
   try {
@@ -445,7 +445,7 @@ smd(
   pattern: "couplepp",
   category: "search",
   desc: "Sends two couples pics.",
-  filename: __filename,
+  
  },
  async (message) => {
   try {
@@ -533,7 +533,7 @@ smd(
   category: "search",
   desc: "Searches in given rage about given number.",
   use: "9112345678xx",
-  filename: __filename,
+  
  },
  async (message, text) => {
   if (!text) return await message.reply("Give Me Number without + sign. Example: .nowa 234902786xx");

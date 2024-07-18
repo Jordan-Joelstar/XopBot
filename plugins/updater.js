@@ -52,7 +52,7 @@ bot(
   try {
    const commits = await DB.syncgit();
    if (commits.total === 0) {
-    return await citel.reply("_Latest Patch Installed");
+    return await citel.reply("_Latest Patch Installed_");
    }
 
    const update = await DB.sync();

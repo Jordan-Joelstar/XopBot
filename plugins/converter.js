@@ -41,7 +41,7 @@ smd(
   alias: ['s'],
   info: 'Makes sticker of replied image/video.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to any image/video.>',
  },
  async (_0x5f0a63) => {
@@ -70,7 +70,7 @@ smd(
   cmdname: 'take',
   info: 'Makes sticker of replied image/video.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to sticker.>',
  },
  async (_0x471740, _0x3febcd) => {
@@ -101,7 +101,7 @@ smd(
   cmdname: 'attp',
   info: 'Makes sticker of given text.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '< text.>',
  },
  async (_0x1544ea, _0x3444c7) => {
@@ -119,7 +119,7 @@ smd(
   alias: ['cropsticker'],
   info: 'Makes sticker of replied image.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to image.>',
  },
  async (_0x50fc92) => {
@@ -149,7 +149,7 @@ smd(
   alias: ['circlestic', 'circlesticker', 'cs'],
   info: 'circle sticker of image.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to image.>',
  },
  async (_0x52caf7) => {
@@ -179,7 +179,7 @@ smd(
   alias: ['roundstic', 'roundsticker'],
   info: 'Makes sticker of replied image/video.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to image.>',
  },
  async (_0x37c100) => {
@@ -209,7 +209,7 @@ smd(
   pattern: 'memegen',
   desc: 'Write text on quoted image.',
   category: 'sticker',
-  filename: __filename,
+  
   use: '<text>',
  },
  async (_0x29b369, _0x406491) => {
@@ -261,7 +261,7 @@ smd(
   desc: 'Mixes two emojies.',
   category: 'sticker',
   use: '<query>',
-  filename: __filename,
+  
  },
  async (_0x46e4d3, _0x5dee47) => {
   try {
@@ -297,7 +297,7 @@ smd(
   alias: ['q'],
   category: 'sticker',
   use: '<reply to any message.>',
-  filename: __filename,
+  
  },
  async (_0xa1cfa2, _0x4ec923) => {
   try {
@@ -368,7 +368,7 @@ smd(
   desc: 'Makes stylish/fancy given text',
   category: 'converter',
   use: '56 Asta',
-  filename: __filename,
+  
  },
  async (_0x230c03, _0x3b568a) => {
   try {
@@ -406,7 +406,7 @@ smd(
   category: 'converter',
   use: '<url>',
   react: '✅',
-  filename: __filename,
+  
  },
  async (_0x85089c, _0x29ac4f) => {
   try {
@@ -427,7 +427,7 @@ smd(
   desc: 'Flips given text.',
   category: 'converter',
   use: '<query>',
-  filename: __filename,
+  
  },
  async (_0x4cfc4e, _0x4cb7aa) => {
   try {
@@ -448,7 +448,7 @@ smd(
   desc: 'encode binary',
   category: 'converter',
   use: '<query>',
-  filename: __filename,
+  
  },
  async (_0x454093, _0x529916) => {
   try {
@@ -474,7 +474,7 @@ smd(
   desc: 'decode binary',
   category: 'converter',
   use: '<query>',
-  filename: __filename,
+  
  },
  async (_0x38e385, _0x196965) => {
   try {
@@ -497,7 +497,7 @@ smd(
  {
   pattern: 'qr',
   category: 'converter',
-  filename: __filename,
+  
   use: '< text >',
   desc: 'Sends CitelsVoid Qr code to scan and get your session id.',
  },
@@ -529,7 +529,7 @@ smd(
   desc: 'create paste of text.',
   category: 'converter',
   use: '< text >',
-  filename: __filename,
+  
  },
  async (_0x3878b3, _0x4974a3) => {
   try {
@@ -548,7 +548,7 @@ smd(
   info: 'Makes photo of replied sticker.',
   type: 'converter',
   use: '<reply to any gif>',
-  filename: __filename,
+  
  },
  async (_0x31d7b) => {
   try {
@@ -579,7 +579,7 @@ smd(
   desc: 'changes type to audio.',
   category: 'converter',
   use: '<reply to any Video>',
-  filename: __filename,
+  
  },
  async (_0x116242) => {
   try {
@@ -641,7 +641,7 @@ smd(
   desc: 'convert sticker to mp4.',
   category: 'converter',
   use: '<reply to any Video>',
-  filename: __filename,
+  
  },
  async (m) => {
   let asta_mp4 = m.mtype === 'videoMessage' ? m : m.reply_message
@@ -702,7 +702,7 @@ smd(
   alias: ['roundstic', 'roundsticker'],
   info: 'Makes sticker of replied image/video.',
   type: 'sticker',
-  filename: __filename,
+  
   use: '<reply to image.>',
  },
  async (_0x54e3dc, _0x8cd246) => {
