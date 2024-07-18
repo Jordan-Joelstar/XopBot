@@ -1,4 +1,4 @@
-const { updateProfilePicture, parsedJid, isAdmin } = require("../lib");
+const { updateProfilePicture, parsedJid } = require("../lib");
 const {
   sck,
   bot,
@@ -1073,37 +1073,54 @@ bot(
   },
 );
 
-bot({
-	pattern: "mute",
-	fromMe: true,
-	desc: "nute group",
-	type: "group",
-}, async (message) => {
-	if (!message.isGroup)
-	return await message.send("_This command is for groups_");
-	let isadmin = await isAdmin(message, message.user.jid);
-	if (!isadmin) return await message.send("_I'm not admin_");
-	const mute = await message.send("_Muting Group_");
-	await sleep(500);
-	await message.client.groupSettingUpdate(message.jid, "announcement");
-	return await mute.edit("_Group Muted_");
-});
+const handleMuteUnmute = async (ctx, isMute) => {
+  if (!ctx.isGroup) {
+    return ctx.reply(tlang().group);
+  }
 
-bot({
-	pattern: "unmute",
-	fromMe: true,
-	desc: "unmute group",
-	type: "group",
-}, async (message) => {
-	if (!message.isGroup)
-	return await message.send("_This command is for groups_");
-	let isadmin = await isAdmin(message, message.user.jid);
-	if (!isadmin) return await message.send("_I'm not admin_");
-	const mute = await message.send("_Unmuting Group_");
-	await sleep(500);
-	await message.client.groupSettingUpdate(message.jid, "not_announcement");
-	return await mute.edit("_Group Unmuted_");
-});
+  if (!ctx.isBotAdmin) {
+    return ctx.reply(tlang().botAdmin);
+  }
+
+  if (!ctx.isCreator && !ctx.isAdmin) {
+    return ctx.reply(tlang().admin);
+  }
+
+  const isCurrentlyMuted = ctx.metadata?.announce;
+  if (isMute === isCurrentlyMuted) {
+    return ctx.reply(`Group is already ${isMute ? 'muted' : 'unmuted'}.`);
+  }
+
+  try {
+    await ctx.bot.groupSettingUpdate(ctx.chat, isMute ? 'announcement' : 'not_announcement');
+    ctx.reply(`Group has been successfully ${isMute ? 'muted' : 'unmuted'}.`);
+  } catch (error) {
+    ctx.reply("Failed to change group settings. Please try again later.");
+    await ctx.error(`${error}\n\ncommand: ${isMute ? 'gmute' : 'gunmute'}`, error);
+  }
+};
+
+bot(
+  {
+    pattern: "mute",
+    desc: "Mutes the group chat",
+    category: "group",
+  },
+  async (ctx) => {
+    await handleMuteUnmute(ctx, true);
+  }
+);
+
+bot(
+  {
+    pattern: "unmute",
+    desc: "Unmutes the group chat",
+    category: "group",
+  },
+  async (ctx) => {
+    await handleMuteUnmute(ctx, false);
+  }
+);
 bot(
   {
     pattern: "lock",
