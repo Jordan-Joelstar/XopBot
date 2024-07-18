@@ -11,12 +11,24 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
   let formattedMessage = welcomeMessage
 
   if (context.isGroup) {
+   // Fetch group owner's name
+   let ownerName = 'Unknown'
+   if (context.metadata.owner) {
+    try {
+     const ownerContact = await context.bot.contacts[context.metadata.owner]
+     ownerName = ownerContact ? ownerContact.name || ownerContact.verifiedName || context.metadata.owner.split('@')[0] : context.metadata.owner.split('@')[0]
+    } catch (error) {
+     console.log('Error fetching owner name:', error)
+     ownerName = context.metadata.owner.split('@')[0]
+    }
+   }
+
    formattedMessage = formattedMessage
     .replace(/@gname|&gname/gi, context.metadata.subject)
     .replace(/@desc|&desc/gi, context.metadata.desc || 'No description')
     .replace(/@count|&count/gi, context.metadata.participants.length)
     .replace(/@groupid|&groupid/gi, context.chat)
-    .replace(/@groupowner|&groupowner/gi, context.metadata.owner || 'Unknown')
+    .replace(/@groupowner|&groupowner/gi, ownerName)
     .replace(/@grouplocation|&grouplocation/gi, context.metadata.location || 'Not specified')
     .replace(/@groupcreation|&groupcreation/gi, new Date(context.metadata.creation * 1000).toLocaleString())
     .replace(/@grouplink|&grouplink/gi, context.metadata.invite || 'No invite link available')
@@ -26,11 +38,15 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
 
    // Add a list of admin names if @adminlist is used
    if (/@adminlist|&adminlist/gi.test(formattedMessage)) {
-    const adminList = context.metadata.participants
-     .filter((p) => p.admin)
-     .map((p) => p.id.split('@')[0])
-     .join(', ')
-    formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList || 'No admins')
+    const adminList = await Promise.all(
+     context.metadata.participants
+      .filter((p) => p.admin)
+      .map(async (p) => {
+       const contact = await context.bot.contacts[p.id]
+       return contact ? contact.name || contact.verifiedName || p.id.split('@')[0] : p.id.split('@')[0]
+      })
+    )
+    formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList.join(', ') || 'No admins')
    }
   }
 
