@@ -14,7 +14,6 @@ global.mongodb = process.env.MONGODB_URI || "";
 global.allowJids = process.env.ALLOW_JID || "null";
 global.blockJids = process.env.BLOCK_JID || "null";
 global.DATABASE_URL = process.env.DATABASE_URL || "";
-global.timezone = process.env.TIME_ZONE || "Africa/Lagos";
 global.github = process.env.GITHUB || "https://github.com/Astropeda/Asta-Md";
 global.gurl = process.env.URL || "https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z";
 global.website = process.env.WEBSITE || "https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z";
@@ -36,6 +35,7 @@ global.SESSION_ID = process.env.SESSION_ID || "";
 module.exports = {
  menu: process.env.MENU || "",
  HANDLERS: process.env.PREFIX || "/",
+ TIME_ZONE: process.env.TIME_ZONE || 'Africa/Lagos',
  BRANCH: process.env.BRANCH || "main",
  VERSION: process.env.VERSION || "1.0.0",
  caption: process.env.CAPTION || "©ᴀsᴛᴀ ᴍᴅ",

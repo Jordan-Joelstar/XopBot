@@ -1,5 +1,5 @@
 const moment = require("moment-timezone");
-const { bot, updateProfilePicture, parsedJid, tlang } = require("../lib");
+const { bot, updateProfilePicture, parsedJid, tlang, bot_ } = require("../lib");
 const messageTypes = ["imageMessage"];
 
 bot(
@@ -377,6 +377,7 @@ bot(
 );
 
 const { profilePictureUrl } = require("@whiskeysockets/baileys");
+const config = require("../config");
 
 bot(
  {
@@ -617,3 +618,67 @@ bot(
   }
  }
 );
+bot(
+ {
+  pattern: "autobio",
+  fromMe: true,
+  desc: "Auto Bio Change",
+  type: "WhatsApp",
+ },
+ async (message, input) => {
+  try {
+   let bio = (await bot_.findOne({ id: `bot_${message.user}` })) || (await bot_.new({ id: `bot_${message.user}` }));
+
+   if (!input) {
+    const statusMessage = bio.autobio === "false" ? `_Auto Bio Disabled_` : `_Auto Bio Enabled_`;
+
+    return await message.send(`_${statusMessage}_\n_Auto Bio Can Be Set To, @rizz, @time, @quotes_\n`);
+   }
+
+   const command = input.toLowerCase().split(" ")[0].trim();
+
+   if (["off", "disable"].includes(command)) {
+    if (abioJob) abioJob.stop();
+    isStartAutoBio = false;
+    if (bio.autobio === "false") return await message.reply("_Auto Bio Disabled_");
+
+    await bot_.updateOne({ id: `bot_${message.user}` }, { autobio: "false" });
+    return await message.reply("_Auto Set Disabled_");
+   } else {
+    await bot_.updateOne({ id: `bot_${message.user}` }, { autobio: input });
+    const bioContent = await getContent(message, input === "true" || input === "on" ? "ᴀᴜᴛᴏʙɪᴏ ᴛɪᴍᴇ ɴᴏᴡ:@time" : input);
+    await message.bot.updateProfileStatus(bioContent);
+    return await message.reply(`_Bio Set:_ ${bioContent}\n\n_Bio Updates Every Mins_\n`);
+   }
+  } catch (error) {
+   await message.error(`${error}\n\nCommand: autobio`, error);
+  }
+  bio = false;
+ }
+);
+
+bot({ on: "text" }, async (message) => {
+ bio = bio || (await bot_.findOne({ id: `bot_${message.user}` }));
+ if (bio && bio.autobio && typeof bio.autobio === "string" && bio.autobio !== "false") {
+  if (!isStartAutoBio) {
+   isStartAutoBio = true;
+   abioJob = cron.schedule(
+    "*/1 * * * *",
+    async () => {
+     try {
+      const bioContent = await getContent(message, bio.autobio === "true" || bio.autobio === "on" ? "ᴀᴜᴛᴏʙɪᴏ ᴛɪᴍᴇ ɴᴏᴡ:@time" : bio.autobio);
+      if (bioContent && bioContent !== "false") {
+       await message.bot.updateProfileStatus(bioContent);
+      }
+     } catch (error) {
+      console.log(error);
+     }
+    },
+    {
+     scheduled: true,
+     timezone: config.TIME_ZONE,
+    }
+   );
+  }
+ }
+});
