@@ -1,4 +1,4 @@
-const { updateProfilePicture, parsedJid } = require("../lib");
+const { updateProfilePicture, parsedJid, isAdmin } = require("../lib");
 const {
   sck,
   bot,
@@ -26,7 +26,7 @@ bot(
       const match = replyFn.match(groupPattern);
 
       if (!match) {
-        return await context.reply("_Group Link?._");
+        return await context.reply("_Group Link?_");
       }
 
       let groupId = match[1].trim();
@@ -67,7 +67,7 @@ bot(
 
 bot(
   {
-    cmdname: "reject",
+    pattern: "reject",
     info: "reject all join requests",
     type: "group",
   },
@@ -119,7 +119,7 @@ bot(
 
 bot(
   {
-    cmdname: "accept",
+    pattern: "accept",
     info: "accept all join requests",
     type: "group",
   },
@@ -174,7 +174,7 @@ bot(
 );
 bot(
   {
-    cmdname: "requests",
+    pattern: "requests",
     info: "view pending join requests",
     type: "group",
   },
@@ -220,7 +220,7 @@ bot(
 
 bot(
   {
-    cmdname: "setdesc",
+    pattern: "setdesc",
     info: "set group description",
     type: "group",
   },
@@ -259,7 +259,7 @@ bot(
 
 bot(
   {
-    cmdname: "setname",
+    pattern: "setname",
     info: "set group name",
     type: "group",
   },
@@ -294,7 +294,7 @@ bot(
 );
 bot(
   {
-    cmdname: "leave",
+    pattern: "leave",
     info: "leave from a group",
     fromMe: true,
     type: "group",
@@ -1067,86 +1067,43 @@ bot(
         return console.log("error in group info,\n", _0x6ae2fc);
       }
     } catch (_0x5a81f0) {
-      await _0x27d001.error(_0x5a81f0 + "\ncmdName: Group info");
+      await _0x27d001.error(_0x5a81f0 + "\npattern: Group info");
       return console.log("error in group info,\n", _0x5a81f0);
     }
   },
 );
 
-bot(
-  {
-    pattern: "mute",
-    desc: "Provides admin role to replied/quoted user",
-    category: "group",
-  },
-  async (_0xadbad4) => {
-    try {
-      if (!_0xadbad4.isGroup) {
-        return _0xadbad4.reply(tlang().group);
-      }
-      if (_0xadbad4.metadata?.announce) {
-        return await _0xadbad4.reply(
-          "*Uhh " +
-            (_0xadbad4.isAstro ? "Master" : "Sir") +
-            ", Group already muted*",
-        );
-      }
-      if (!_0xadbad4.isBotAdmin) {
-        return _0xadbad4.reply(tlang().botAdmin);
-      }
-      if (!_0xadbad4.isCreator && !_0xadbad4.isAdmin) {
-        return _0xadbad4.reply(tlang().admin);
-      }
-      await _0xadbad4.bot
-        .groupSettingUpdate(_0xadbad4.chat, "announcement")
-        .then((_0x150a20) =>
-          _0xadbad4.reply("*_Group Chat Muted successfully!!_*"),
-        )
-        .catch((_0x5d5c82) =>
-          _0xadbad4.reply("*_Can't change Group Setting, Sorry!_*"),
-        );
-    } catch (_0x2bea0d) {
-      await _0xadbad4.error(_0x2bea0d + "\n\ncommand: gmute", _0x2bea0d);
-    }
-  },
-);
-bot(
-  {
-    pattern: "unmute",
-    desc: "Provides admin role to replied/quoted user",
-    category: "group",
-  },
-  async (_0x5d1afd) => {
-    try {
-      if (!_0x5d1afd.isGroup) {
-        return _0x5d1afd.reply(tlang().group);
-      }
-      if (!_0x5d1afd.metadata?.announce) {
-        return await _0x5d1afd.reply(
-          "*Hey " +
-            (_0x5d1afd.isAstro ? "Master" : "Sir") +
-            ", Group already unmute*",
-        );
-      }
-      if (!_0x5d1afd.isBotAdmin) {
-        return _0x5d1afd.reply(tlang().botAdmin);
-      }
-      if (!_0x5d1afd.isCreator && !_0x5d1afd.isAdmin) {
-        return _0x5d1afd.reply(tlang().admin);
-      }
-      await _0x5d1afd.bot
-        .groupSettingUpdate(_0x5d1afd.chat, "not_announcement")
-        .then((_0x5993c4) =>
-          _0x5d1afd.reply("*_Group Chat UnMute successfully!!_*"),
-        )
-        .catch((_0x293794) =>
-          _0x5d1afd.reply("*_Can't change Group Setting, Sorry!_*"),
-        );
-    } catch (_0x3ea023) {
-      await _0x5d1afd.error(_0x3ea023 + "\n\ncommand: gunmute", _0x3ea023);
-    }
-  },
-);
+bot({
+	pattern: "mute",
+	fromMe: true,
+	desc: "nute group",
+	type: "group",
+}, async (message) => {
+	if (!message.isGroup)
+	return await message.send("_This command is for groups_");
+	let isadmin = await isAdmin(message, message.user.jid);
+	if (!isadmin) return await message.send("_I'm not admin_");
+	const mute = await message.send("_Muting Group_");
+	await sleep(500);
+	await message.client.groupSettingUpdate(message.jid, "announcement");
+	return await mute.edit("_Group Muted_");
+});
+
+bot({
+	pattern: "unmute",
+	fromMe: true,
+	desc: "unmute group",
+	type: "group",
+}, async (message) => {
+	if (!message.isGroup)
+	return await message.send("_This command is for groups_");
+	let isadmin = await isAdmin(message, message.user.jid);
+	if (!isadmin) return await message.send("_I'm not admin_");
+	const mute = await message.send("_Unmuting Group_");
+	await sleep(500);
+	await message.client.groupSettingUpdate(message.jid, "not_announcement");
+	return await mute.edit("_Group Unmuted_");
+});
 bot(
   {
     pattern: "lock",
