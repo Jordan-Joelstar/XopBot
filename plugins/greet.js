@@ -11,24 +11,12 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
   let formattedMessage = welcomeMessage
 
   if (context.isGroup) {
-   // Fetch group owner's name
-   let ownerName = 'Unknown'
-   if (context.metadata.owner) {
-    try {
-     const ownerContact = await context.bot.getContactById(context.metadata.owner)
-     ownerName = ownerContact.pushName || context.metadata.owner.split('@')[0]
-    } catch (error) {
-     console.log('Error fetching owner name:', error)
-     ownerName = context.metadata.owner.split('@')[0]
-    }
-   }
-
    formattedMessage = formattedMessage
     .replace(/@gname|&gname/gi, context.metadata.subject)
     .replace(/@desc|&desc/gi, context.metadata.desc || 'No description')
     .replace(/@count|&count/gi, context.metadata.participants.length)
     .replace(/@groupid|&groupid/gi, context.chat)
-    .replace(/@groupowner|&groupowner/gi, ownerName)
+    .replace(/@groupowner|&groupowner/gi, context.metadata.owner || 'Unknown')
     .replace(/@grouplocation|&grouplocation/gi, context.metadata.location || 'Not specified')
     .replace(/@groupcreation|&groupcreation/gi, new Date(context.metadata.creation * 1000).toLocaleString())
     .replace(/@grouplink|&grouplink/gi, context.metadata.invite || 'No invite link available')
@@ -38,28 +26,24 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
 
    // Add a list of admin names if @adminlist is used
    if (/@adminlist|&adminlist/gi.test(formattedMessage)) {
-    const adminList = await Promise.all(
-     context.metadata.participants
-      .filter((p) => p.admin)
-      .map(async (p) => {
-       const contact = await context.bot.getContactById(p.id)
-       return contact.pushName || p.id.split('@')[0]
-      })
-    )
-    formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList.join(', ') || 'No admins')
+    const adminList = context.metadata.participants
+     .filter((p) => p.admin)
+     .map((p) => p.id.split('@')[0])
+     .join(', ')
+    formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList || 'No admins')
    }
   }
 
   formattedMessage = formattedMessage
-   .replace(/@user|&user/gi, context.senderName)
-   .replace(/@name|&name/gi, context.pushName || '_')
+   .replace(/@user|&user/gi, '@' + context.senderName)
+   .replace(/@name|&name/gi, context.senderName || '_')
    .replace(/@time|&time/gi, context.time)
    .replace(/@date|&date/gi, context.date)
-   .replace(/@bot|&bot/gi, Config.botname)
    .replace(/@owner|&owner/gi, Config.ownername)
    .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, context.gurl || '')
    .replace(/@runtime|&runtime|@uptime|&uptime/gi, runtime(process.uptime()))
    .trim()
+
   try {
    const pickupLine = await fetchJson('https://api.popcat.xyz/pickuplines')
    formattedMessage = formattedMessage.replace(/@line|&line/gi, pickupLine.pickupline || '')

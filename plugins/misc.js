@@ -70,15 +70,7 @@ bot(
    const randomDesign = designs[Math.floor(Math.random() * designs.length)]
    const messageData = await randomDesign()
 
-   const message_options = {
-    quoted: message,
-    contextInfo: {
-     forwardingScore: 999,
-     isForwarded: true,
-    },
-   }
-
-   return await message.bot.sendMessage(message.chat, messageData, message_options)
+   return await message.bot.sendMessage(message.chat, messageData)
   } catch (error) {
    await message.error(error + '\n\nCommand: alive', error)
   }
