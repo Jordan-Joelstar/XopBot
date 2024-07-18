@@ -8,7 +8,7 @@ bot(
   },
   async (m) => {
     try {
-      await client.interactiveMessage(m.jid, {
+      await m.message(m.jid, {
         title: 'Hello!',
         text: 'This is a basic interactive message.',
         footer: 'Footer Text',
