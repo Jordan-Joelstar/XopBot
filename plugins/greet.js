@@ -24,7 +24,7 @@ async function sendWelcome(context, welcomeMessage = "", buttons = "", mentioned
    .replace(/@date|&date/gi, context.date)
    .replace(/@bot|&bot/gi, Config.botname)
    .replace(/@owner|&owner/gi, Config.ownername)
-   .replace(/@caption|&caption/gi, caption)
+   .replace(/@caption|&caption/gi, Config.caption)
    .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, gurl)
    .replace(/@runtime|&runtime|@uptime|&uptime/gi, runtime(process.uptime()))
    .trim();
