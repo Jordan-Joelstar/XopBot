@@ -13,18 +13,33 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
   if (context.isGroup) {
    formattedMessage = formattedMessage
     .replace(/@gname|&gname/gi, context.metadata.subject)
-    .replace(/@desc|&desc/gi, context.metadata.desc)
+    .replace(/@desc|&desc/gi, context.metadata.desc || 'No description')
     .replace(/@count|&count/gi, context.metadata.participants.length)
+    .replace(/@groupid|&groupid/gi, context.chat)
+    .replace(/@groupowner|&groupowner/gi, context.metadata.owner || 'Unknown')
+    .replace(/@grouplocation|&grouplocation/gi, context.metadata.location || 'Not specified')
+    .replace(/@groupcreation|&groupcreation/gi, new Date(context.metadata.creation * 1000).toLocaleString())
+    .replace(/@grouplink|&grouplink/gi, context.metadata.invite || 'No invite link available')
+    .replace(/@admins|&admins/gi, context.metadata.participants.filter((p) => p.admin).length)
+    .replace(/@restrictions|&restrictions/gi, context.metadata.restrict ? 'Restricted' : 'Not restricted')
+    .replace(/@announce|&announce/gi, context.metadata.announce ? 'Announcement mode ON' : 'Announcement mode OFF')
+
+   // Add a list of admin names if @adminlist is used
+   if (/@adminlist|&adminlist/gi.test(formattedMessage)) {
+    const adminList = context.metadata.participants
+     .filter((p) => p.admin)
+     .map((p) => p.id.split('@')[0])
+     .join(', ')
+    formattedMessage = formattedMessage.replace(/@adminlist|&adminlist/gi, adminList || 'No admins')
+   }
   }
 
   formattedMessage = formattedMessage
-   .replace(/@user|&user/gi, '@' + context.senderNum)
+   .replace(/@user|&user/gi, '@' + context.senderName)
    .replace(/@name|&name/gi, context.senderName || '_')
    .replace(/@time|&time/gi, context.time)
    .replace(/@date|&date/gi, context.date)
-   .replace(/@bot|&bot/gi, Config.botname)
    .replace(/@owner|&owner/gi, Config.ownername)
-   .replace(/@caption|&caption/gi, Config.caption)
    .replace(/@gurl|@website|&gurl|&website|@link|&link/gi, context.gurl || '')
    .replace(/@runtime|&runtime|@uptime|&uptime/gi, runtime(process.uptime()))
    .trim()
