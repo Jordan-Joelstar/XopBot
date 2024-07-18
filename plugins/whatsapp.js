@@ -1,18 +1,39 @@
 const moment = require('moment-timezone')
+const axios = require('axios')
 const { bot, updateProfilePicture, tlang, bot_, userdb, parsedJid, sleep, Config, prefix, fetchJson, getTime } = require('../lib')
 const messageTypes = ['imageMessage']
-const getContent = async (_0x299ece, _0x10f0d6 = "") => {
+const getContent = async (context, template = "") => {
   try {
-    let _0x55c1c8 = _0x10f0d6;
-    if (_0x10f0d6) {
-      if (_0x299ece.isGroup) {
-        _0x55c1c8 = _0x10f0d6.replace(/@gname/gi, _0x299ece.metadata.subject || "").replace(/@desc/gi, _0x299ece.metadata.desc || "").replace(/@count/gi, _0x299ece.metadata.participants.length || "1");
+    let content = template;
+
+    if (template) {
+      // If the context is a group, replace placeholders with group metadata
+      if (context.isGroup) {
+        content = template
+          .replace(/@gname/gi, context.metadata.subject || "")
+          .replace(/@desc/gi, context.metadata.desc || "")
+          .replace(/@count/gi, context.metadata.participants.length || "1");
       }
-      _0x55c1c8 = _0x55c1c8.replace(/@user/gi, "" + _0x299ece.senderName).replace(/@gname/gi, "").replace(/@desc/gi, "").replace(/@count/gi, "1").replace(/@pp/g, "").replace(/@time/gi, getTime("h:mm:ss a") || _0x299ece.time).replace(/@date/gi, getTime("dddd, MMMM Do YYYY") || _0x299ece.date).replace(/@line/gi, (await fetchJson("https://api.popcat.xyz/pickuplines")).pickupline).replace(/@quote/, (await axios.get("https://favqs.com/api/qotd")).data.quote.body).replace(/@bot/gi, "" + Config.botname).replace(/@owner/gi, "" + Config.ownername).trim();
-      return _0x55c1c8;
+
+      // Replace common placeholders
+      content = content
+        .replace(/@user/gi, context.senderName)
+        .replace(/@gname/gi, "")
+        .replace(/@desc/gi, "")
+        .replace(/@count/gi, "1")
+        .replace(/@pp/g, "")
+        .replace(/@time/gi, getTime("h:mm:ss a") || context.time)
+        .replace(/@date/gi, getTime("dddd, MMMM Do YYYY") || context.date)
+        .replace(/@line/gi, (await fetchJson("https://api.popcat.xyz/pickuplines")).pickupline)
+        .replace(/@quote/gi, (await axios.get("https://favqs.com/api/qotd")).data.quote.body)
+        .replace(/@bot/gi, Config.botname)
+        .replace(/@owner/gi, Config.ownername)
+        .trim();
+
+      return content;
     }
-  } catch (_0x5cdce0) {
-    console.log( _0x5cdce0);
+  } catch (error) {
+    console.error(error);
   }
 };
 bot(
