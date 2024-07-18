@@ -64,34 +64,14 @@ async function sendWelcome(context, welcomeMessage = '', buttons = '', mentioned
     mentionedJid: mentionedJids,
    }
 
-   let profilePic
-   if (/@pp/g.test(welcomeMessage)) {
-    profilePic = await context.getpp(context.sender)
-   } else if (context.jid && /@gpp/g.test(welcomeMessage)) {
-    profilePic = await context.getpp(context.jid)
-   }
-
-   if (profilePic) {
-    return await context.send(
-     profilePic,
-     {
-      caption: formattedMessage,
-      mentions: mentionedJids,
-      contextInfo: contextInfo,
-     },
-     'image',
-     buttons
-    )
-   } else {
-    return await context.send(
-     formattedMessage,
-     {
-      mentions: mentionedJids,
-      contextInfo: contextInfo,
-     },
-     buttons
-    )
-   }
+   return await context.send(
+    formattedMessage,
+    {
+     mentions: mentionedJids,
+     contextInfo: contextInfo,
+    },
+    buttons
+   )
   } else {
    return formattedMessage
   }
@@ -152,7 +132,7 @@ async function handleGroupMessage(context, args, messageType) {
 
   if (!args || command === 'get') {
    const formattedMessage = await sendWelcome(context, groupData[textField], '', '', 'text')
-   return await context.reply(`*Current ${messageType}:*\n\n${formattedMessage}`)
+   return await context.reply(formattedMessage)
   }
 
   if (['off', 'disable'].includes(command)) {
@@ -174,7 +154,7 @@ async function handleGroupMessage(context, args, messageType) {
 
   // Format and send the welcome message as a preview
   const formattedMessage = await sendWelcome(context, args, '', '', 'text')
-  await context.send(`*${messageType} message set and enabled!*\n\nPreview:\n${formattedMessage}`)
+  await context.send(formattedMessage)
  } catch (error) {
   context.error(`${error}\n\ncommand: set${messageType}`, error)
  }
