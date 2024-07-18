@@ -1073,7 +1073,7 @@ bot(
   },
 );
 
-const handleMuteUnmute = async (ctx, isMute) => {
+const handleGroupAction = async (ctx, action) => {
   if (!ctx.isGroup) {
     return ctx.reply(tlang().group);
   }
@@ -1086,17 +1086,38 @@ const handleMuteUnmute = async (ctx, isMute) => {
     return ctx.reply(tlang().admin);
   }
 
-  const isCurrentlyMuted = ctx.metadata?.announce;
-  if (isMute === isCurrentlyMuted) {
-    return ctx.reply(`Group is already ${isMute ? 'muted' : 'unmuted'}.`);
+  const isCurrentlyRestricted = ctx.metadata?.restrict;
+  const isMute = action === 'mute' || action === 'lock';
+  const currentState = {
+    mute: ctx.metadata?.announce,
+    lock: isCurrentlyRestricted,
+    unmute: ctx.metadata?.announce,
+    unlock: isCurrentlyRestricted
+  }[action];
+
+  if (currentState === isMute) {
+    return ctx.reply(`Group is already ${action}d.`);
   }
 
+  const settingMap = {
+    mute: 'announcement',
+    unmute: 'not_announcement',
+    lock: 'locked',
+    unlock: 'unlocked'
+  };
+
   try {
-    await ctx.bot.groupSettingUpdate(ctx.chat, isMute ? 'announcement' : 'not_announcement');
-    ctx.reply(`Group has been successfully ${isMute ? 'muted' : 'unmuted'}.`);
+    await ctx.bot.groupSettingUpdate(ctx.chat, settingMap[action]);
+    const message = {
+      mute: 'Group has been muted. Only admins can send messages.',
+      unmute: 'Group has been unmuted. Everyone can send messages.',
+      lock: 'Group settings have been locked. Only admins can modify group settings.',
+      unlock: 'Group settings have been unlocked. Everyone can modify group settings.'
+    }[action];
+    ctx.reply(message);
   } catch (error) {
     ctx.reply("Failed to change group settings. Please try again later.");
-    await ctx.error(`${error}\n\ncommand: ${isMute ? 'gmute' : 'gunmute'}`, error);
+    await ctx.error(`${error}\n\ncommand: ${action}`, error);
   }
 };
 
@@ -1105,9 +1126,10 @@ bot(
     pattern: "mute",
     desc: "Mutes the group chat",
     category: "group",
+    fromMe: true,
   },
   async (ctx) => {
-    await handleMuteUnmute(ctx, true);
+    await handleGroupAction(ctx, 'mute');
   }
 );
 
@@ -1116,90 +1138,35 @@ bot(
     pattern: "unmute",
     desc: "Unmutes the group chat",
     category: "group",
+    fromMe: true,
   },
   async (ctx) => {
-    await handleMuteUnmute(ctx, false);
+    await handleGroupAction(ctx, 'unmute');
   }
 );
+
 bot(
   {
     pattern: "lock",
+    desc: "Locks group settings (only admins can modify)",
+    category: "group",
     fromMe: true,
-    desc: "only allow admins to modify the group's settings.",
-    type: "group",
   },
-  async (_0x1dca9f, _0x44b327) => {
-    try {
-      if (!_0x1dca9f.isGroup) {
-        return _0x1dca9f.reply(tlang().group);
-      }
-      if (_0x1dca9f.metadata.restrict) {
-        return await _0x1dca9f.reply(
-          "*Hey " +
-            (_0x1dca9f.isAstro ? "Master" : "Sir") +
-            ", Group setting already locked*",
-        );
-      }
-      if (!_0x1dca9f.isBotAdmin) {
-        return await _0x1dca9f.reply("*_I'm not admin!_*");
-      }
-      if (!_0x1dca9f.isCreator && !_0x1dca9f.isAdmin) {
-        return _0x1dca9f.reply(tlang().admin);
-      }
-      await _0x1dca9f.bot
-        .groupSettingUpdate(_0x1dca9f.chat, "locked")
-        .then((_0x49c387) =>
-          _0x1dca9f.reply(
-            "*_Group locked, Only Admin can change group settinggs!!_*",
-          ),
-        )
-        .catch((_0x100d44) =>
-          _0x1dca9f.reply("*_Can't change Group Setting, Sorry!_*"),
-        );
-    } catch (_0x9e6207) {
-      await _0x1dca9f.error(_0x9e6207 + "\n\ncommand: lock", _0x9e6207);
-    }
-  },
+  async (ctx) => {
+    await handleGroupAction(ctx, 'lock');
+  }
 );
+
 bot(
   {
     pattern: "unlock",
+    desc: "Unlocks group settings (everyone can modify)",
+    category: "group",
     fromMe: true,
-    desc: "allow everyone to modify the group's settings.",
-    type: "group",
   },
-  async (_0xe880ee, _0x2dce84) => {
-    try {
-      if (!_0xe880ee.isGroup) {
-        return _0xe880ee.reply(tlang().group);
-      }
-      if (!_0xe880ee.metadata.restrict) {
-        return await _0xe880ee.reply(
-          "*Hey " +
-            (_0xe880ee.isAstro ? "Master" : "Sir") +
-            ", Group setting already unlocked*",
-        );
-      }
-      if (!_0xe880ee.isBotAdmin) {
-        return await _0xe880ee.reply("*_I'm not admin!_*");
-      }
-      if (!_0xe880ee.isCreator && !_0xe880ee.isAdmin) {
-        return _0xe880ee.reply(tlang().admin);
-      }
-      await _0xe880ee.bot
-        .groupSettingUpdate(_0xe880ee.chat, "unlocked")
-        .then((_0x282118) =>
-          _0xe880ee.reply(
-            "*_Group unlocked, everyone change group settings!!_*",
-          ),
-        )
-        .catch((_0x320353) =>
-          _0xe880ee.reply("*_Can't change Group Setting, Sorry!_*"),
-        );
-    } catch (_0x20d64c) {
-      await _0xe880ee.error(_0x20d64c + "\n\ncommand: unlock", _0x20d64c);
-    }
-  },
+  async (ctx) => {
+    await handleGroupAction(ctx, 'unlock');
+  }
 );
 bot(
   {
