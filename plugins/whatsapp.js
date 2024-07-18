@@ -19,7 +19,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : pp`, error)
   }
- },
+ }
 )
 
 bot(
@@ -39,7 +39,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : fullpp`, error)
   }
- },
+ }
 )
 
 bot(
@@ -56,7 +56,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : rpp`, error)
   }
- },
+ }
 )
 
 bot(
@@ -76,7 +76,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : bio`, error)
   }
- },
+ }
 )
 
 bot(
@@ -97,7 +97,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : ptv`, error)
   }
- },
+ }
 )
 
 bot(
@@ -119,7 +119,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : quoted`, error)
   }
- },
+ }
 )
 
 bot(
@@ -144,7 +144,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : blocklist`, error)
   }
- },
+ }
 )
 
 bot(
@@ -166,7 +166,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\n command: listpc`, error, "*_Didn't get any results, Sorry!_*")
   }
- },
+ }
 )
 
 bot(
@@ -189,7 +189,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\n command: listgc`, error)
   }
- },
+ }
 )
 
 bot(
@@ -221,7 +221,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : vcard`, error)
   }
- },
+ }
 )
 
 bot(
@@ -244,7 +244,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : edit`, error)
   }
- },
+ }
 )
 
 bot(
@@ -268,7 +268,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand : forward`, error)
   }
- },
+ }
 )
 
 bot(
@@ -296,7 +296,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand: block`, error, false)
   }
- },
+ }
 )
 
 bot(
@@ -321,7 +321,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\ncommand: unblock`, error)
   }
- },
+ }
 )
 
 bot(
@@ -357,12 +357,12 @@ bot(
      },
      caption: viewOnceMessage.body,
     },
-    { quoted: quotedMessage },
+    { quoted: quotedMessage }
    )
   } catch (error) {
    await message.error(`${error}\n\ncommand: vv`, error)
   }
- },
+ }
 )
 bot(
  {
@@ -373,7 +373,7 @@ bot(
  async ({ jid: groupJid, reply: sendReply, quoted: quotedMessage }) => {
   const userJid = quotedMessage ? quotedMessage.sender : groupJid
   return sendReply(userJid)
- },
+ }
 )
 
 const { profilePictureUrl } = require('@whiskeysockets/baileys')
@@ -398,7 +398,7 @@ bot(
   } catch (error) {
    await context.error(`${error}\n\nCommand: getpp`, error)
   }
- },
+ }
 )
 
 async function getUserProfilePicture(jid, sock) {
@@ -455,7 +455,7 @@ bot(
       image: { url: userProfilePic },
       caption: userInfo,
      },
-     { quoted: context },
+     { quoted: context }
     )
    } else {
     return context.reply('*_Reply A User_*')
@@ -463,7 +463,7 @@ bot(
   } catch (error) {
    await context.error(`${error}\n\ncommand : whois`, error)
   }
- },
+ }
 )
 
 bot(
@@ -480,7 +480,7 @@ bot(
   } catch (error) {
    await context.error(`${error}\n\ncommand : wa`, error, false)
   }
- },
+ }
 )
 
 bot(
@@ -496,7 +496,7 @@ bot(
   } catch (error) {
    await context.error(`${error}\n\ncommand : mee`, error)
   }
- },
+ }
 )
 bot(
  {
@@ -547,7 +547,7 @@ bot(
   } catch (error) {
    await message.error(error + '\n\ncommand: ' + cmd, error)
   }
- },
+ }
 )
 bot(
  {
@@ -580,7 +580,7 @@ bot(
   } catch (error) {
    await message.error(error + '\n\ncommand: join', error)
   }
- },
+ }
 )
 
 bot(
@@ -616,7 +616,7 @@ bot(
    // Handle errors
    await message.error(error + '\n\ncommand: ' + cmdName, error)
   }
- },
+ }
 )
 bot(
  {
@@ -654,7 +654,7 @@ bot(
    await message.error(`${error}\n\nCommand: autobio`, error)
   }
   bio = false
- },
+ }
 )
 
 bot({ on: 'text' }, async (message) => {
@@ -677,7 +677,7 @@ bot({ on: 'text' }, async (message) => {
     {
      scheduled: true,
      timezone: config.TIME_ZONE,
-    },
+    }
    )
   }
  }
@@ -728,7 +728,7 @@ bot(
   } catch (error) {
    await message.error(`${error}\n\nCommand: ${cmdName}`, error)
   }
- },
+ }
 )
 
 bot(
@@ -758,7 +758,7 @@ bot(
   } catch (error) {
    return await message.error(`${error}\n\nCommand: approve`, error)
   }
- },
+ }
 )
 
 bot(
@@ -785,5 +785,77 @@ bot(
   } catch (error) {
    await message.error(`${error}\nCommand: disapprove`, error)
   }
- },
+ }
 )
+bot(
+ {
+  pattern: 'save',
+  desc: 'Save whatsapp status',
+  type: 'whatsapp',
+ },
+ async (message) => {
+  try {
+   let mm = message.reply_message && message.reply_message.status ? message.reply_message : false
+   if (mm) {
+    message.bot.forwardOrBroadCast(message.user, mm, {
+     quoted: { key: mm.key, message: mm.message },
+    })
+   } else message.send('*reply to whatsapp status*')
+  } catch (e) {
+   await message.error(`${e}\n\ncommand : #(Status Saver)`, e, false)
+  }
+ }
+)
+const regexSend = new RegExp(`\\b(?:${['send', 'share', 'forward'].join('|')})\\b`, 'i')
+bot({ on: 'quoted' }, async (message, text) => {
+ try {
+  let mm = message.reply_message.status ? message.reply_message : false
+  if (mm && regexSend.test(text.toLowerCase())) {
+   message.bot.forwardOrBroadCast(message.fromMe ? message.user : message.from, mm, { quoted: { key: mm.key, message: mm.message } })
+  }
+ } catch (e) {
+  console.log(e)
+ }
+})
+
+Config.WA_PRESENCE = process.env.WAPRESENCE && process.env.WAPRESENCE === 'online' ? 'available' : process.env.WAPRESENCE || ''
+
+let status = false
+bot({ on: 'main' }, async (message, { icmd }) => {
+ try {
+  if (!status) {
+   try {
+    status = true
+   } catch (e) {}
+  }
+
+  if (message.status) return
+  if (`${Config.READ_MSG_FROM}`.includes(message.senderNum) || ['true'].includes(Config.AUTO_READ_MSG) || (icmd && ['true'].includes(Config.AUTO_READ_CMD))) message.bot.readMessages([message.key])
+ } catch (e) {
+  console.log(e)
+ }
+})
+
+bot({ on: 'text' }, async (message) => {
+ try {
+  if (['unavailable', 'available', 'composing', 'recording', 'paused'].includes(waPresence)) message.bot.sendPresenceUpdate(waPresence, message.from)
+  if (message.isAstro && !message.fromMe && !message.text.startsWith('$')) message.react('🤖')
+ } catch (e) {
+  console.log(e)
+ }
+})
+
+bot({ on: 'status' }, async (message, text) => {
+ try {
+  if (`${Config.AUTO_READ_STATUS}`.split(',').includes(message.key.participant.split('@')[0]) || ['true'].includes(Config.AUTO_SAVE_STATUS) || message.fromMe || message.isAstro) {
+   await message.bot.readMessages([{ ...message.key, fromMe: false }])
+  }
+  if ((`${Config.AUTO_SAVE_STATUS_FROM}`.split(',').includes(message.key.participant.split('@')[0]) || ['true'].includes(Config.AUTO_SAVE_STATUS)) && !message.fromMe) {
+   await message.bot.forwardOrBroadCast(message.user, message, {
+    quoted: { key: message.key, message: message.message },
+   })
+  }
+ } catch (e) {
+  console.log(e)
+ }
+})
