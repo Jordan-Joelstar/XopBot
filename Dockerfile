@@ -1,5 +1,5 @@
 # Base Image node bullseye (Debian-based)
-FROM node:16-bullseye
+FROM node:18-bullseye
 ENV SHARP_IGNORE_GLOBAL_LIBVIPS=1
 ENV npm_config_arch=x64
 ENV npm_config_platform=linux
