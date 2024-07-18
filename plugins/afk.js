@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 let db = {};
 
 db.get = async () => {
- const filePath = "./afk.json";
+ const filePath = "./lib/tmp/afk.json";
  try {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
  } catch (error) {
