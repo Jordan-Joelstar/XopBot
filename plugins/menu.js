@@ -1,8 +1,6 @@
 const os = require("os");
 const { runtime, formatp, tiny, bot } = require("../lib");
 const config = require("../config");
-const long = String.fromCharCode(8206);
-const readmore = long.repeat(4001);
 
 bot(
   {
@@ -39,7 +37,7 @@ bot(
 ┃╰──────────────
 ╰═══════════════⊷
 \t *ᴠᴇʀsɪᴏɴ 𝟷.𝟶*
-${readmore}`;
+`;
 
       // Append commands to the menu text
       for (const category in categorizedCommands) {
