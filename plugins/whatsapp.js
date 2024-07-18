@@ -2,40 +2,40 @@ const moment = require('moment-timezone')
 const axios = require('axios')
 const { bot, updateProfilePicture, tlang, bot_, userdb, parsedJid, sleep, Config, prefix, fetchJson, getTime } = require('../lib')
 const messageTypes = ['imageMessage']
-const getContent = async (context, template = "") => {
-  try {
-    let content = template;
+const getContent = async (context, template = '') => {
+ try {
+  let content = template
 
-    if (template) {
-      // If the context is a group, replace placeholders with group metadata
-      if (context.isGroup) {
-        content = template
-          .replace(/@gname/gi, context.metadata.subject || "")
-          .replace(/@desc/gi, context.metadata.desc || "")
-          .replace(/@count/gi, context.metadata.participants.length || "1");
-      }
+  if (template) {
+   // If the context is a group, replace placeholders with group metadata
+   if (context.isGroup) {
+    content = template
+     .replace(/@gname/gi, context.metadata.subject || '')
+     .replace(/@desc/gi, context.metadata.desc || '')
+     .replace(/@count/gi, context.metadata.participants.length || '1')
+   }
 
-      // Replace common placeholders
-      content = content
-        .replace(/@user/gi, context.senderName)
-        .replace(/@gname/gi, "")
-        .replace(/@desc/gi, "")
-        .replace(/@count/gi, "1")
-        .replace(/@pp/g, "")
-        .replace(/@time/gi, getTime("h:mm:ss a") || context.time)
-        .replace(/@date/gi, getTime("dddd, MMMM Do YYYY") || context.date)
-        .replace(/@line/gi, (await fetchJson("https://api.popcat.xyz/pickuplines")).pickupline)
-        .replace(/@quote/gi, (await axios.get("https://favqs.com/api/qotd")).data.quote.body)
-        .replace(/@bot/gi, Config.botname)
-        .replace(/@owner/gi, Config.ownername)
-        .trim();
+   // Replace common placeholders
+   content = content
+    .replace(/@user/gi, context.senderName)
+    .replace(/@gname/gi, '')
+    .replace(/@desc/gi, '')
+    .replace(/@count/gi, '1')
+    .replace(/@pp/g, '')
+    .replace(/@time/gi, getTime('h:mm:ss a') || context.time)
+    .replace(/@date/gi, getTime('dddd, MMMM Do YYYY') || context.date)
+    .replace(/@line/gi, (await fetchJson('https://api.popcat.xyz/pickuplines')).pickupline)
+    .replace(/@quote/gi, (await axios.get('https://favqs.com/api/qotd')).data.quote.body)
+    .replace(/@bot/gi, Config.botname)
+    .replace(/@owner/gi, Config.ownername)
+    .trim()
 
-      return content;
-    }
-  } catch (error) {
-    console.error(error);
+   return content
   }
-};
+ } catch (error) {
+  console.error(error)
+ }
+}
 bot(
  {
   pattern: 'pp',
@@ -728,7 +728,7 @@ bot(
    const botData = (await bot_.findOne({ id: `bot_${message.user}` })) || (await bot_.new({ id: `bot_${message.user}` }))
    if (!input) {
     const status = botData.permit ? 'enabled' : 'disabled'
-    return await message.send(`*PmPermit Currently ${status}!!!*\n*Set to:* \`\`\`${botData.values.toUpperCase()}\`\`\`\n\n*Available Cmds:* \`\`\`\n${prefix}${cmdName} off\n${prefix}${cmdName} on | all\n${prefix}${cmdName} on | 212,91\`\`\`\n\n${Config.caption}`)
+    return await message.send(`*PmPermit Currently ${status}!!!*\n*Set to:* \`\`\`${botData.permit_values ? botData.permit_values.toUpperCase() : 'N/A'}\`\`\`\n\n*Available Cmds:* \`\`\`\n${prefix}${cmdName} off\n${prefix}${cmdName} on | all\n${prefix}${cmdName} on | 212,91\`\`\`\n\n${Config.caption}`)
    }
 
    const [command, values] = input.toLowerCase().trim().split('|')
@@ -764,7 +764,6 @@ bot(
   }
  }
 )
-
 bot(
  {
   pattern: 'approve',
