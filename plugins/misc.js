@@ -1,6 +1,5 @@
 const { bot } = require("../lib");
 const axios = require("axios");
-const { mention, filter } = require("../lib/Asta");
 bot(
  {
   pattern: "alive",
@@ -80,73 +79,5 @@ bot(
   } catch (error) {
    await message.error(error + "\n\nCommand: alive", error);
   }
- }
-);
-bot(
- {
-  pattern: "mention",
-  fromMe: true,
-  type: "chats",
-  desc: "set auto reply for mention",
- },
- async (message, match) => {
-  mention.cmd(message, match);
- }
-);
-
-bot(
- {
-  on: "main",
-  fromMe: false,
- },
- async (message, match = "") => {
-  mention.check(message, match);
- }
-);
-
-bot(
- {
-  pattern: "filter",
-  type: "chats",
-  desc: "set auto reply filter messages",
-  fromMe: true,
- },
- async (message, match) => {
-  filter.set(message, match);
- }
-);
-
-bot(
- {
-  pattern: "fstop",
-  type: "chats",
-  desc: "stop auto reply from a word",
-  fromMe: true,
- },
- async (message, match) => {
-  filter.stop(message, match);
- }
-);
-
-bot(
- {
-  pattern: "flist",
-  type: "chats",
-  desc: "get list of auto reply word",
-  fromMe: true,
- },
- async (message) => {
-  filter.list(message);
- }
-);
-
-bot(
- {
-  on: "text",
- },
- async (message, match) => {
-  try {
-   filter.check(message, match);
-  } catch (error) {}
  }
 );
