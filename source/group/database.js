@@ -1,5 +1,16 @@
-const { decodeJid } = require('./baileys')
+const { jidDecode } = require("@whiskeysockets/baileys");
 
+const decodeJid = (jid) => {
+  if (!jid) return jid;
+  if (/:\d+@/gi.test(jid)) {
+    const decode = jidDecode(jid) || {};
+    return decode.user && decode.server
+      ? `${decode.user}@${decode.server}`
+      : jid;
+  } else {
+    return jid;
+  }
+};
 const isBotAdmin = async (message) => {
  const groupMetadata = await message.store.fetchGroupMetadata(message.chat)
  const admins = await groupMetadata.participants.filter((v) => v.admin !== null).map((v) => v.id)
@@ -34,4 +45,5 @@ module.exports = {
  parsedJid,
  isBotAdmin,
  getAllGroups,
+ decodeJid
 }
