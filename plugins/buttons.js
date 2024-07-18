@@ -8,7 +8,7 @@ bot(
   },
   async (m) => {
     try {
-      await m.message(m.jid, {
+      await m.sendMessage(m.jid, {
         title: 'Hello!',
         text: 'This is a basic interactive message.',
         footer: 'Footer Text',
