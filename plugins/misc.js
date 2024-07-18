@@ -1,7 +1,6 @@
-const { bot } = require('../lib')
+const { bot, fancytext } = require('../lib')
 const Config = require('../config')
 const axios = require('axios')
-let { fancytext, bot } = require('../lib')
 const astro_patch = require('../lib/plugins')
 const events = astro_patch
 bot(
