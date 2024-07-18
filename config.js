@@ -21,7 +21,6 @@ global.THUMB_IMAGE = process.env.THUMB_IMAGE || process.env.IMAGE || 'https://ra
 global.devs = '2348039607375'
 global.sudo = process.env.SUDO || '2348039607375'
 global.owner = process.env.OWNER_NUMBER || '2348039607375'
-global.style = process.env.STYLE || '2'
 global.gdbye = process.env.GOODBYE || 'false'
 global.wlcm = process.env.WELCOME || 'false'
 global.warncount = process.env.WARN_COUNT || 3
@@ -31,6 +30,7 @@ global.userImages = process.env.USER_IMAGES || ''
 
 global.SESSION_ID = process.env.SESSION_ID || ''
 module.exports = {
+    MSG_STYLE: process.env.STYLE || '0',
  WA_PRESENCE: process.env.WAPRESENCE || 'online',
  AUTO_SAVE_STATUS_FROM: process.env.AUTO_STATUS_FROM || '',
  READ_MSG_FROM: process.env.READ_MSG_FROM || 'null',
