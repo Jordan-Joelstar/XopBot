@@ -14,7 +14,7 @@ db.get = async () => {
 
 db.update = async (newData) => {
  try {
-  const filePath = "./afk.json";
+  const filePath = "./lib/tmp/afk.json";
   const currentData = await db.get();
   const updatedData = { ...currentData, ...newData };
   fs.writeFileSync(filePath, JSON.stringify(updatedData, null, 2), "utf-8");
