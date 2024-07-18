@@ -1,5 +1,5 @@
 const { bot } = require("../lib/plugins");
-const Lang = require("./misc/lang").getString("afk");
+const Lang = require('../lib/lang').getString("afk");
 const config = require("../config");
 var AFK_DB = {
  isAfk: false,
