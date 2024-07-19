@@ -2,7 +2,7 @@ const os = require('os')
 const fs = require('fs').promises
 const path = require('path')
 const cron = require('node-cron')
-const { fancytext, runtime, formatp } = require('../lib')
+const { runtime, formatp, tiny } = require('../lib')
 const Config = require('../config')
 const { generateWAMessageFromContent, proto, prepareWAMessageMedia } = require('@whiskeysockets/baileys')
 
@@ -10,7 +10,6 @@ const BUTTONS = process.env.BUTTONS || process.env.MENU_BTN || '1'
 const caption = process.env.CAPTION || Config.caption || 'αѕтα-м∂ 2024'
 const ownername = Config.ownername || 'αѕтяσ'
 const botname = Config.botname || 'αѕтα-м∂'
-const menu_fancy = process.env.MENU_FANCY || 'ss'
 
 let ui_urls = []
 
@@ -149,13 +148,13 @@ const sendButtons = async (message, context = {}, messageBody = [], onBodyBtn = 
 const handleMenuCommand = async (message, match) => {
  try {
   const { commands } = require('../lib')
-  const cmdlets = {}
+  const categorizedCommands = {}
   commands.forEach((cmd) => {
    if (cmd.dontAddCommandList === false && cmd.pattern !== undefined) {
-    if (!cmdlets[cmd.category]) {
-     cmdlets[cmd.category] = []
+    if (!categorizedCommands[cmd.category]) {
+     categorizedCommands[cmd.category] = []
     }
-    cmdlets[cmd.category].push(cmd.pattern)
+    categorizedCommands[cmd.category].push(cmd.pattern)
    }
   })
   const currentTime = message.time
@@ -177,20 +176,20 @@ const handleMenuCommand = async (message, match) => {
  ${'\u200b'.repeat(4001)}
 `
 
-  for (const category in cmdlets) {
-   if (match.toLowerCase() === category.toLowerCase()) {
-    menuText = `「 *${fancytext(category)}* 」\n`
-    for (const cmd of cmdlets[category]) {
-     menuText += `││◦ ${fancytext(cmd)}\n`
-    }
-    menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
+  // Append commands to the menu text
+  for (const category in categorizedCommands) {
+   menuText += `
+「 *${tiny(category)}* 」\n`
+
+   for (const command of categorizedCommands[category]) {
+    menuText += `││◦ ${tiny(command, 1)}\n`
+   }
+
+   menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
+
+   // If input matches the category, break after appending its commands
+   if (input.toLowerCase() === category.toLowerCase()) {
     break
-   } else {
-    menuText += `「 *${fancytext(category)}* 」\n`
-    for (const cmd of cmdlets[category]) {
-     menuText += `││◦ ${fancytext(cmd)}\n`
-    }
-    menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
    }
   }
 
