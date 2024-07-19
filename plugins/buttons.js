@@ -10,10 +10,8 @@ const BUTTONS = process.env.BUTTONS || process.env.MENU_BTN || '1'
 const caption = process.env.CAPTION || Config.caption || 'αѕтα-м∂ 2024'
 const ownername = Config.ownername || 'αѕтяσ'
 const botname = Config.botname || 'αѕтα-м∂'
-const HANDLERS = Config.HANDLERS || '^'
 const menu_fancy = process.env.MENU_FANCY || 'ss'
 
-let ui_Cache = {}
 let ui_urls = []
 
 const initFormat = ['.jpg', '.jpeg', '.png', '.webp']
@@ -160,9 +158,6 @@ const handleMenuCommand = async (message, match) => {
     cmdlets[cmd.category].push(cmd.pattern)
    }
   })
-
-  const menuFancys = [1, 22, 23, 1, 36, 35, 48, 1, 42, 55, 56]
-  const text = parseInt(menu_fancy) || menuFancys[Math.floor(Math.random() * menuFancys.length)]
   const currentTime = message.time
   const currentDate = message.date
   const currentUser = message.pushName
@@ -184,16 +179,16 @@ const handleMenuCommand = async (message, match) => {
 
   for (const category in cmdlets) {
    if (match.toLowerCase() === category.toLowerCase()) {
-    menuText = `「 *${fancytext(category, text)}* 」\n`
+    menuText = `「 *${fancytext(category)}* 」\n`
     for (const cmd of cmdlets[category]) {
-     menuText += `││◦ ${fancytext(cmd, text)}\n`
+     menuText += `││◦ ${fancytext(cmd)}\n`
     }
     menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
     break
    } else {
-    menuText += `「 *${fancytext(category, text)}* 」\n`
+    menuText += `「 *${fancytext(category)}* 」\n`
     for (const cmd of cmdlets[category]) {
-     menuText += `││◦ ${fancytext(cmd, text)}\n`
+     menuText += `││◦ ${fancytext(cmd)}\n`
     }
     menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
    }
