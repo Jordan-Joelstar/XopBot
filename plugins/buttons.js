@@ -174,7 +174,7 @@ global.sendButtons = async (message, context = {}, messageBody = [], customJid =
 
 bot(
  {
-  cmdname: 'menu',
+  cmdname: 'menu2',
   desc: 'Help list',
   type: 'user',
  },
@@ -231,22 +231,6 @@ bot(
     contextInfo: {},
    }
    await sendButtons(message, menuContext, [{ name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Owner', url: Config.LINK }) }])
-  } catch (error) {
-   console.log(error)
-  }
- }
-)
-
-bot(
- {
-  cmdname: 'menu2',
-  desc: 'Menu buttons test',
-  type: 'user',
- },
- async (message, match) => {
-  try {
-   const buttonsTestMessage = 'Testing #button : cta_url | display_text : Visit Us | url : https://example.com/#'
-   await sendButtons(message, {}, buttonsTestMessage)
   } catch (error) {
    console.log(error)
   }
