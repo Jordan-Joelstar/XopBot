@@ -15,7 +15,7 @@ bot(
    const start = new Date().getTime()
    const designs = [
     async () => {
-     const imageBuffer = await axios.get('https://i.imgur.com/z20pSwu.jpeg', {
+     const imageBuffer = await axios.get('https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg', {
       responseType: 'arraybuffer',
      })
 
@@ -33,7 +33,7 @@ bot(
      return { image: imageBuffer.data, caption: captionText }
     },
     async () => {
-     const imageBuffer = await axios.get('https://i.imgur.com/lIo3cM2.jpeg', {
+     const imageBuffer = await axios.get('https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg', {
       responseType: 'arraybuffer',
      })
 
@@ -50,7 +50,7 @@ bot(
      return { image: imageBuffer.data, caption: captionText }
     },
     async () => {
-     const imageBuffer = await axios.get('https://i.imgur.com/OQOH4Gn.jpeg', {
+     const imageBuffer = await axios.get('https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpg', {
       responseType: 'arraybuffer',
      })
 
