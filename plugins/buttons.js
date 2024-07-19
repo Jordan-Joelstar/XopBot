@@ -163,7 +163,9 @@ const handleMenuCommand = async (message, match) => {
 
   const menuFancys = [1, 22, 23, 1, 36, 35, 48, 1, 42, 55, 56]
   const text = parseInt(menu_fancy) || menuFancys[Math.floor(Math.random() * menuFancys.length)]
-
+  const currentTime = message.time
+  const currentDate = message.date
+  const currentUser = message.pushName
   let menuText = `
 ╭═══ ${botname}
 ┃╭──────────────
