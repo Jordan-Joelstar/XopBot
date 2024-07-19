@@ -26,7 +26,7 @@ global.wlcm = process.env.WELCOME || 'false'
 global.warncount = process.env.WARN_COUNT || 3
 global.disablepm = process.env.DISABLE_PM || 'false'
 ;(global.disablegroup = process.env.DISABLE_GROUPS || 'false'), (global.MsgsInLog = process.env.MSGS_IN_LOG || 'true')
-global.userImages = process.env.USER_IMAGES || ''
+global.userImages = process.env.USER_IMAGES || 'https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpeg'
 
 global.SESSION_ID = process.env.SESSION_ID || ''
 module.exports = {
