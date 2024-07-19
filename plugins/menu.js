@@ -1,5 +1,5 @@
 const { bot } = require('../lib')
-const { handleMenuCommand } = require('./buttons')
+const { handleMenuCommand } = require('../lib/menu')
 
 bot(
  {
