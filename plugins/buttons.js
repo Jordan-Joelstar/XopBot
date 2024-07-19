@@ -151,41 +151,6 @@ const sendButtons = async (message, context = {}, messageBody = [], onBodyBtn = 
 const handleMenuCommand = async (message, match) => {
  try {
   const { commands } = require('../lib')
-
-  const menuStyles = {
-   1: {
-    topHeader: `╭━━━〔 *${botname}* 〕━━━┈⊷`,
-    sideHeader: '┃✵│',
-    topFooter: '┃✵╰──────────────\n╰━━━━━━━━━━━━━━━┈⊷',
-    categoryStart: '╭─────────────┈⊷\n│「',
-    categoryEnd: '」\n╰┬────────────┈⊷',
-    cmdLine: '││◦➛',
-    categoryFullEnd: '│╰────────────┈⊷\n╰─────────────┈⊷',
-   },
-   2: {
-    topHeader: `╭═══ *${botname}*  ═══⊷\n┃❃╭──────────────`,
-    sideHeader: '┃❃│',
-    topFooter: '┃❃╰───────────────\n╰═════════════════⊷',
-    categoryStart: '╭─❏',
-    categoryEnd: '❏',
-    cmdLine: '┃❃│',
-    categoryFullEnd: '┃❃╰───────────────\n╰═════════════════⊷',
-   },
-   3: {
-    topHeader: `╭═══〘  ${botname}  〙═══⊷❍\n┃✰╭──────────────`,
-    sideHeader: '┃✰│',
-    topFooter: '┃✰╰───────────────\n╰═════════════════⊷',
-    categoryStart: '╭════〘',
-    categoryEnd: '〙════⊷❍',
-    cmdLine: '┃✰│',
-    categoryFullEnd: '┃✰╰─────────────────❍\n╰══════════════════⊷❍',
-   },
-  }
-
-  const menuType = menu === '' ? Math.floor(Math.random() * 3) + 1 : menu.trim().startsWith('1') || menu.toLowerCase().includes('v1') ? 1 : menu.trim().startsWith('2') || menu.toLowerCase().includes('v2') ? 2 : 3
-
-  const style = menuStyles[menuType]
-
   const cmdlets = {}
   commands.forEach((cmd) => {
    if (cmd.dontAddCommandList === false && cmd.pattern !== undefined) {
@@ -199,32 +164,36 @@ const handleMenuCommand = async (message, match) => {
   const menuFancys = [1, 22, 23, 1, 36, 35, 48, 1, 42, 55, 56]
   const text = parseInt(menu_fancy) || menuFancys[Math.floor(Math.random() * menuFancys.length)]
 
-  let menuText = `${style.topHeader}
-${style.sideHeader} ＵＳＥＲ:- ${ownername}
-${style.sideHeader} ＭＯＤＥ:- ${Config.WORKTYPE}
-${style.sideHeader} ＣＭＤＳ:- ${commands.length}
-${style.sideHeader} ＡＬＩＶＥ:- ${runtime(process.uptime())}
-${style.sideHeader} ＲＡＭ:- ${formatp(os.totalmem() - os.freemem())}
-${style.sideHeader} ＴＩＭＥ:- ${message.time}
-${style.topFooter}
-\t\`\`\`❑ ᴘᴀᴛᴄʜ 𝟹.𝟻.𝟶 ❑\`\`\`
+  let menuText = `
+╭═══ ${botname}
+┃╭──────────────
+┃│ ᴜsᴇʀ : ${currentUser}
+┃│ ᴛɪᴍᴇ : ${currentTime}
+┃│ ᴅᴀᴛᴇ : ${currentDate}
+┃│ ʀᴀᴍ  : ${formatp(os.totalmem() - os.freemem())}
+┃│ ᴜᴘᴛɪᴍᴇ : ${runtime(process.uptime())}
+┃│ ᴘʟᴀᴛғᴏʀᴍ: ${os.platform()}
+┃│ ᴘʟᴜɢɪɴs : ${commands.length}
+┃╰──────────────
+╰━━━━━━━━━━━━━━━┈⊷
+\t *ᴠᴇʀsɪᴏɴ 𝟷.𝟶*
  ${'\u200b'.repeat(4001)}
 `
 
   for (const category in cmdlets) {
    if (match.toLowerCase() === category.toLowerCase()) {
-    menuText = `${style.categoryStart} *${fancytext(category, text)}* ${style.categoryEnd}\n`
+    menuText = `「 *${fancytext(category, text)}* 」\n`
     for (const cmd of cmdlets[category]) {
-     menuText += `${style.cmdLine} ${fancytext(cmd, text)}\n`
+     menuText += `││◦ ${fancytext(cmd, text)}\n`
     }
-    menuText += `${style.categoryFullEnd}\n`
+    menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
     break
    } else {
-    menuText += `${style.categoryStart} *${fancytext(category, text)}* ${style.categoryEnd}\n`
+    menuText += `「 *${fancytext(category, text)}* 」\n`
     for (const cmd of cmdlets[category]) {
-     menuText += `${style.cmdLine} ${fancytext(cmd, text)}\n`
+     menuText += `││◦ ${fancytext(cmd, text)}\n`
     }
-    menuText += `${style.categoryFullEnd}\n`
+    menuText += `│╰────────────┈⊷\n╰─────────────┈⊷\n`
    }
   }
 
