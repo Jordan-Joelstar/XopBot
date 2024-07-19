@@ -1,0 +1,53 @@
+{
+ "__JSON__": true,
+ "AUTHOR": "Astro",
+ "theme": "XOP",
+ "LANGUAGE": "English",
+ "LANGCODE": "en",
+ "STRINGS": {
+  "updater": {
+   "UPDATE": "The bot is currently up to date.",
+   "UPDATED_LOCAL": "Bot updated successfully."
+  },
+  "global": {
+   "botName": "XOP BOT",
+   "body": "Advanced WhatsApp Bot",
+   "greet2": "Good day, Sir.",
+   "pic1": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg",
+   "pic2": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg",
+   "pic3": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpeg",
+   "pic4": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg",
+   "pic5": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg",
+   "pic6": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpeg",
+   "pic7": "https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg",
+   "greet": "Greetings",
+   "dotbody": "Greetings, Sir Astro, my creator.",
+   "emojii": "📊",
+   "promote": "Asta has been promoted to Admin status.",
+   "pmallow": "Hello, @user. Please refrain from sending excessive messages.",
+   "permited": "Greetings, Sir. You now have permission to message me.",
+   "revoked": "Greetings, Sir. Your messaging permission has been revoked.",
+   "demote": "Admin privileges have been withdrawn.",
+   "antlink": "Link detected. The violator has been removed.",
+   "session": "Please ensure you keep your session ID secure, Sir.",
+   "mention": "Please tag the bot owner.",
+   "title": "XOP BOT",
+   "footer": "XOP BOT",
+   "by": "Developed by: Astro",
+   "success": "Operation completed successfully.",
+   "dot": "Greetings. Did you intend to use '-help'?\nKindly avoid interruptions during my maintenance procedures.",
+   "couple_male": "Your assistance is greatly appreciated and valued.",
+   "couple_female": "Your assistance is greatly appreciated and valued.",
+   "admin": "This command is restricted to Group Administrators.",
+   "botAdmin": "Please grant administrative privileges to enable this action.",
+   "owner": "This function is restricted to the bot owner.",
+   "group": "This feature is only available in group settings.",
+   "private": "This feature is restricted to the bot owner's private use.",
+   "bot": "This feature is exclusively for the bot owner's use.",
+   "wait": "Processing your request..."
+  },
+  "error": {
+   "text": "Please refrain from unauthorized interactions."
+  }
+ }
+}
