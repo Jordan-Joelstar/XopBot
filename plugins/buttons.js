@@ -145,7 +145,7 @@ const sendButtons = async (message, context = {}, messageBody = [], onBodyBtn = 
  return generatedMessage
 }
 
-const handleMenuCommand = async (message, match) => {
+const handleMenuCommand = async (message, input, match) => {
  try {
   const { commands } = require('../lib')
   const categorizedCommands = {}
