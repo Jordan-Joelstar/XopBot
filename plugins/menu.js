@@ -228,7 +228,9 @@ bot(
     caption: menuText,
    }
 
-   return await sendButtons(message.chat, messageOptions)
+   let channel = 'https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z'
+
+   return await sendButtons(message.chat, messageOptions, [{ name: 'cta_url', buttonParamsJson: JSON.stringify({ display_text: 'Support Channel', url: channel }) }])
   } catch (error) {
    await message.error(`${error}\nCommand: menu`, error)
   }
