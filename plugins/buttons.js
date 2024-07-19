@@ -5,6 +5,7 @@ let { fancytext, runtime, formatp, prefix, bot } = require("../lib");
 const long = String.fromCharCode(8206);
 const readmore = long.repeat(4001);
 const cron = require("node-cron");
+global.button = global.BUTTONS || '1'
 global.caption = global.caption || Config.caption || "αѕтα-м∂ 2024";
 global.ownername = global.ownername || Config.ownername || "αѕтяσ";
 global.botname = global.botname || Config.botname || "αѕтα-м∂";
