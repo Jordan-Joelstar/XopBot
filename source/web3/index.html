@@ -211,6 +211,7 @@
        accessGranted = true
        button.onclick = () => {
         window.location.href = 'https://example.com'
+        // Reset the state after redirecting
         accessGranted = false
         button.textContent = 'Check Fork'
        }
