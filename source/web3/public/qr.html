@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8" />
+  <title>Secktor-Session</title>
+  <link rel="icon" type="image/x-icon" href="https://www.secktorbot.tech/main.jpg" />
+  <link rel="stylesheet" href="./style-qr.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+  <meta property="og:image" content="https://www.secktorbot.tech/main.jpg" />
+  <meta property="og:title" content="Secktor-Md | Session" />
+  <meta property="og:description" content="Introducing Secktor, Secktor is designed to bring a whole new level of excitement to your boring WhatsApp use." />
+ </head>
+ <body>
+  <div class="bg">
+   <h1>Secktor</h1>
+  </div>
+  <div class="nft">
+   <div class="main">
+    <div class="countdown" id="countdown">QR code will appear in 3...</div>
+    <img id="qrImage" class="tokenImage" src="" alt="Loading QR Code..." />
+    <h2>Secktor Bot</h2>
+    <p class="description" id="description">You'll get session id in log number.</p>
+    <div class="tokenInfo">
+     <div class="price">
+      <ins>◘</ins>
+      <p>CitelVoid</p>
+     </div>
+     <div class="duration">
+      <ins>◷</ins>
+      <div id="scanDuration">Scan within <span id="countdownTimer">20</span> sec</div>
+     </div>
+    </div>
+    <hr />
+    <div class="creator">
+     <div class="wrapper">
+      <img src="https://avatars.githubusercontent.com/u/175747986?v=4" alt="Creator" />
+     </div>
+     <p><ins>XOP DEVELOPER</ins> ASTRO</p>
+    </div>
+    <button id="refreshButton" onclick="refreshQRCode()">Refresh QR</button>
+   </div>
+  </div>
+
+  <script>
+   let countdownInterval
+   let scanCountdownInterval
+
+   function loadQRCode() {
+    fetch('/qr')
+     .then((response) => {
+      if (!response.ok) {
+       throw new Error('Network response was not ok')
+      }
+      return response.blob()
+     })
+     .then((blob) => {
+      const url = URL.createObjectURL(blob)
+      const qrImage = document.getElementById('qrImage')
+      qrImage.src = url
+      qrImage.style.display = 'block' // Show QR code after loading
+
+      // Remove the countdown element
+      const countdownElement = document.getElementById('countdown')
+      countdownElement.style.display = 'none'
+
+      // Start scan countdown
+      startScanCountdown()
+     })
+     .catch((error) => {
+      console.error('Error loading QR code:', error)
+      document.getElementById('qrImage').alt = 'Error loading QR code'
+     })
+   }
+
+   function startScanCountdown() {
+    let seconds = 20
+    const scanDurationElement = document.getElementById('scanDuration')
+    const countdownTimerElement = document.getElementById('countdownTimer')
+    const refreshButton = document.getElementById('refreshButton')
+    const descriptionElement = document.getElementById('description')
+
+    // Clear any existing scan countdown interval
+    if (scanCountdownInterval) {
+     clearInterval(scanCountdownInterval)
+    }
+
+    scanCountdownInterval = setInterval(() => {
+     countdownTimerElement.textContent = seconds
+     seconds -= 1
+
+     if (seconds < 0) {
+      clearInterval(scanCountdownInterval)
+      scanDurationElement.style.display = 'none' // Hide scan countdown
+      document.getElementById('qrImage').style.display = 'none' // Hide QR code
+      refreshButton.style.display = 'block' // Show refresh button
+      descriptionElement.textContent = 'Server dead, please rescan' // Update description text
+     }
+    }, 1000)
+   }
+
+   function countdown(callback) {
+    let seconds = 3
+    const countdownElement = document.getElementById('countdown')
+
+    // Clear any existing countdown interval
+    if (countdownInterval) {
+     clearInterval(countdownInterval)
+    }
+
+    countdownInterval = setInterval(() => {
+     countdownElement.textContent = `QR code will appear in ${seconds}...`
+     seconds -= 1
+
+     if (seconds < 0) {
+      clearInterval(countdownInterval)
+      countdownElement.textContent = 'Loading QR Code...'
+      loadQRCode()
+     }
+    }, 1000)
+   }
+
+   function refreshQRCode() {
+    const refreshButton = document.getElementById('refreshButton')
+    const countdownElement = document.getElementById('countdown')
+    const scanDurationElement = document.getElementById('scanDuration')
+    const descriptionElement = document.getElementById('description')
+
+    // Clear existing intervals
+    clearInterval(countdownInterval)
+    clearInterval(scanCountdownInterval)
+
+    // Reset and show elements
+    refreshButton.style.display = 'none' // Hide refresh button
+    document.getElementById('qrImage').style.display = 'none' // Hide QR code
+    countdownElement.style.display = 'block' // Show QR code countdown
+    scanDurationElement.style.display = 'block' // Show scan countdown
+    descriptionElement.textContent = "You'll get session id in log number." // Reset description text
+
+    // Restart countdowns
+    startScanCountdown()
+    countdown(() => {}) // Restart QR code countdown
+   }
+
+   window.onload = () => {
+    countdown() // Start QR code countdown on page load
+   }
+  </script>
+ </body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Your'e Not A Robot</title>
+  <style>
+   :root {
+    --primary-color: #0366d6;
+    --hover-color: #0056b3;
+    --background-color: #f6f8fa;
+    --text-color: #24292e;
+    --error-color: #cb2431;
+    --success-color: #28a745;
+    --warning-color: #f9c513;
+   }
+
+   body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+   }
+
+   .container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+   }
+
+   h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+   }
+
+   form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+   }
+
+   input[type='text'] {
+    padding: 0.75rem 1rem;
+    border: 1px solid #e1e4e8;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, opacity 0.3s ease;
+   }
+
+   input[type='text']:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.3);
+   }
+
+   input[type='text']:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+   }
+
+   button {
+    padding: 0.75rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease, opacity 0.3s ease;
+   }
+
+   button:hover:not(:disabled) {
+    background-color: var(--hover-color);
+   }
+
+   button:active:not(:disabled) {
+    transform: translateY(1px);
+   }
+
+   button:disabled {
+    background-color: #959da5;
+    cursor: not-allowed;
+    opacity: 0.6;
+   }
+
+   #message {
+    margin-top: 1rem;
+    font-weight: bold;
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+   }
+
+   .valid {
+    background-color: #e6ffed;
+    color: var(--success-color);
+   }
+
+   .invalid {
+    background-color: #ffeef0;
+    color: var(--error-color);
+   }
+
+   .checking {
+    background-color: #f6f8fa;
+    color: var(--text-color);
+   }
+
+   .warning {
+    background-color: #fff5b1;
+    color: #735c0f;
+   }
+
+   @media (max-width: 480px) {
+    .container {
+     padding: 1.5rem;
+    }
+
+    h3 {
+     font-size: 1.25rem;
+    }
+
+    input[type='text'],
+    button {
+     padding: 0.6rem 0.8rem;
+    }
+   }
+  </style>
+ </head>
+ <body>
+  <div class="container">
+   <h3>Human Verification</h3>
+   <form action="#post">
+    <input type="text" name="username" id="git-username" placeholder="Github Username" />
+    <button type="submit">Check User</button>
+   </form>
+  </div>
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('form')
+    const input = document.getElementById('git-username')
+    const button = document.querySelector('button')
+    const messageDiv = document.createElement('div')
+    messageDiv.id = 'message'
+    form.appendChild(messageDiv)
+
+    let failedAttempts = 0
+    let lastAttemptTime = 0
+    let cooldownTimer = null
+
+    form.addEventListener('submit', async (e) => {
+     e.preventDefault()
+     const username = input.value.trim()
+
+     if (!username) {
+      setMessage('Please enter a GitHub username', false)
+      return
+     }
+
+     if (username === 'AstroAnalytics') {
+      setMessage("Can't use creator username", false)
+      return
+     }
+
+     const currentTime = Date.now()
+     if (currentTime - lastAttemptTime < 30000) {
+      failedAttempts++
+     } else {
+      failedAttempts = 0
+     }
+     lastAttemptTime = currentTime
+
+     if (failedAttempts >= 3) {
+      startCooldown()
+      return
+     }
+
+     setMessage('Checking...', null)
+     button.disabled = true
+     button.textContent = 'Checking...'
+
+     try {
+      // First, check if the user exists
+      const userResponse = await fetch(`https://api.github.com/users/${username}`)
+      if (!userResponse.ok) {
+       throw new Error('User not found')
+      }
+
+      // Then, check for forks of the specific repository
+      const forksResponse = await fetch(`https://api.github.com/repos/AstroAnalytics/XopBot/forks`)
+      const forks = await forksResponse.json()
+
+      const hasFork = forks.some((fork) => fork.owner.login.toLowerCase() === username.toLowerCase())
+
+      if (hasFork) {
+       setMessage('Valid: User has forked the repository', true)
+       button.disabled = false
+       button.textContent = 'Get Access'
+       button.onclick = () => (window.location.href = 'https://example.com')
+       failedAttempts = 0
+      } else {
+       setMessage("User hasn't forked the repository", false)
+       button.textContent = 'Check Fork'
+       failedAttempts++
+       if (failedAttempts >= 3) {
+        startCooldown()
+       }
+      }
+     } catch (error) {
+      if (error.message === 'User not found') {
+       setMessage('GitHub user not found', false)
+      } else {
+       setMessage('Error checking repository', false)
+       console.error('Error:', error)
+      }
+      button.textContent = 'Check Fork'
+      failedAttempts++
+      if (failedAttempts >= 3) {
+       startCooldown()
+      }
+     }
+    })
+
+    function setMessage(text, isValid) {
+     messageDiv.textContent = text
+     messageDiv.className = isValid === null ? 'checking' : isValid ? 'valid' : 'invalid'
+     button.disabled = isValid === null
+    }
+
+    function startCooldown() {
+     setMessage('Server cooling down. Please wait 30 seconds.', false)
+     button.disabled = true
+     button.textContent = 'Cooling Down'
+     input.disabled = true
+     let secondsLeft = 30
+
+     cooldownTimer = setInterval(() => {
+      secondsLeft--
+      setMessage(`Server cooling down. Please wait ${secondsLeft} seconds.`, false)
+
+      if (secondsLeft <= 0) {
+       clearInterval(cooldownTimer)
+       setMessage('You can try again now.', null)
+       button.disabled = false
+       button.textContent = 'Check Fork'
+       input.disabled = false
+       failedAttempts = 0
+      }
+     }, 1000)
+    }
+
+    input.addEventListener('input', () => {
+     if (cooldownTimer === null) {
+      if (messageDiv.textContent) {
+       messageDiv.textContent = ''
+       messageDiv.className = ''
+      }
+      button.disabled = false
+      button.textContent = 'Check Fork'
+     }
+    })
+   })
+  </script>
+ </body>
+</html>

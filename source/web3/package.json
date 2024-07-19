@@ -1,0 +1,27 @@
+{
+  "name": "web3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.5",
+    "awesome-phonenumber": "^6.10.0",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "fs": "^0.0.1-security",
+    "helmet": "^7.1.0",
+    "pastebin-js": "^1.0.6",
+    "path": "^0.12.7",
+    "phone": "^3.1.49",
+    "pino": "^9.3.1",
+    "qrcode": "^1.5.3",
+    "yarn": "^1.22.22"
+  }
+}
