@@ -1,19 +1,16 @@
 const os = require('os')
-const { runtime, formatp, tiny, bot } = require('../lib')
+const { tiny, bot, runtime, formatp, prefix } = require('../lib')
 const config = require('../config')
-const os = require('os')
 const fs = require('fs')
-const Config = require('../config')
-const { fancytext, runtime, formatp, prefix, bot } = require('../lib')
 const longCharacter = String.fromCharCode(8206)
 const readMoreSeparator = longCharacter.repeat(4001)
 const cron = require('node-cron')
 
-global.caption = global.caption || Config.caption || 'αѕтα-м∂ 2024'
-global.ownerName = global.ownerName || Config.ownerName || 'αѕтяσ'
-global.botName = global.botName || Config.botName || 'αѕтα-м∂'
-global.menuOption = global.menuOption || Config.menu || ''
-global.commandPrefix = global.commandPrefix || Config.HANDLERS || prefix || '^'
+global.caption = global.caption || config.caption || 'αѕтα-м∂ 2024'
+global.ownerName = global.ownerName || config.ownerName || 'αѕтяσ'
+global.botName = global.botName || config.botName || 'αѕтα-м∂'
+global.menuOption = global.menuOption || config.menu || ''
+global.commandPrefix = global.commandPrefix || config.HANDLERS || prefix || '^'
 global.menuStyle = global.menuStyle || process.env.MENU_STYLE || 'ss'
 global.uiCache = {}
 global.uiUrls = []
