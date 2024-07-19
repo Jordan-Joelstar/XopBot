@@ -30,7 +30,7 @@ global.userImages = process.env.USER_IMAGES || ''
 
 global.SESSION_ID = process.env.SESSION_ID || ''
 module.exports = {
-    MSG_STYLE: process.env.STYLE || '0',
+ MSG_STYLE: process.env.STYLE || '0',
  WA_PRESENCE: process.env.WAPRESENCE || 'online',
  AUTO_SAVE_STATUS_FROM: process.env.AUTO_STATUS_FROM || '',
  READ_MSG_FROM: process.env.READ_MSG_FROM || 'null',
