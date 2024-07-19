@@ -1,167 +1,219 @@
 const os = require("os");
 const fs = require("fs");
 const Config = require("../config");
-const { fancytext, runtime, formatp, prefix, bot } = require("../lib");
-const longCharacter = String.fromCharCode(8206);
-const readMoreSeparator = longCharacter.repeat(4001);
+let { fancytext, runtime, formatp, prefix, bot } = require("../lib");
+const long = String.fromCharCode(8206);
+const readmore = long.repeat(4001);
 const cron = require("node-cron");
-
 global.caption = global.caption || Config.caption || "αѕтα-м∂ 2024";
-global.ownerName = global.ownerName || Config.ownerName || "αѕтяσ";
-global.botName = global.botName || Config.botName || "αѕтα-м∂";
-global.menuOption = global.menuOption || Config.menu || "";
-global.commandPrefix = global.commandPrefix || Config.HANDLERS || prefix || "^";
-global.menuStyle = global.menuStyle || process.env.MENU_STYLE || "ss";
-global.uiCache = {};
-global.uiUrls = [];
-let cronStarted = false;
-
-if (!cronStarted) {
+global.ownername = global.ownername || Config.ownername || "αѕтяσ";
+global.botname = global.botname || Config.botname || "αѕтα-м∂";
+global.menu = global.menu || Config.menu || "";
+global.HANDLERS = global.HANDLERS || Config.HANDLERS || prefix || "^";
+global.menu_fancy = global.menu_fancy || process.env.MENU_FANCY || "ss";
+global.ui_Cache = {};
+global.ui_urls = [];
+var cronStart = false;
+if (!cronStart) {
   cron.schedule("*/15 * * * *", () => {
-    cronStarted = true;
+    cronStart = true;
     fs.readdir("./temp", (err, files) => {
-      if (err) return;
-      files.forEach((file) => {
-        try {
-          fs.unlinkSync(`./temp/${file}`);
-        } catch (e) {
-          console.log("Error deleting files:", e);
-        }
-      });
+      if (err) {
+        return;
+      } else {
+        files.forEach((file) => {
+          try {
+            fs.unlinkSync("./temp/" + file);
+          } catch {
+            console.log("ERROR DELETING FILES: ", e);
+          }
+        });
+      }
     });
   });
 }
-
-global.createUserInterface = () => {
+global.create_UI = () => {
   if (!global.userImages || /text|txt|nothing/.test(global.userImages)) {
     return {};
   }
-  const imageFormats = [".jpg", ".jpeg", ".png", ".webp"];
-  const videoFormats = [".mp4", ".avi", ".mov", ".mkv", ".gif", ".m4v"];
-  if (!uiUrls || !uiUrls[0]) {
-    uiUrls = global.userImages ? global.userImages.split(",") : [""];
-    uiUrls = uiUrls.filter((url) => url.trim() !== "");
+  const initFormat = [".jpg", ".jpeg", ".png", ".webp"];
+  const rcnFormat = [".mp4", ".avi", ".mov", ".mkv", ".gif", ".m4v"];
+  if (!ui_urls || !ui_urls[0]) {
+    ui_urls = global.userImages ? global.userImages.split(",") : [""];
+    ui_urls = ui_urls.filter((_0x2e34e7) => _0x2e34e7.trim() !== "");
   }
-  const selectedUrl = (uiUrls[Math.floor(Math.random() * uiUrls.length)] || "").trim();
-  if (/http/gi.test(selectedUrl) && !uiCache[selectedUrl]) {
-    const fileExtension = selectedUrl.substring(selectedUrl.lastIndexOf(".")).toLowerCase();
-    if (imageFormats.includes(fileExtension)) {
-      uiCache[selectedUrl] = "image";
-    } else if (videoFormats.includes(fileExtension)) {
-      uiCache[selectedUrl] = "video";
+  let RandomSwitch = (
+    ui_urls[Math.floor(Math.random() * ui_urls.length)] || ""
+  ).trim();
+  if (/http/gi.test(RandomSwitch) && !ui_infoCache[RandomSwitch]) {
+    const IndexedSwitched = RandomSwitch.substring(
+      RandomSwitch.lastIndexOf(".")
+    ).toLowerCase();
+    if (initFormat.includes(IndexedSwitched)) {
+      ui_Cache[RandomSwitch] = "image";
+    } else if (rcnFormat.includes(IndexedSwitched)) {
+      ui_Cache[RandomSwitch] = "video";
     }
   }
   return {
-    [uiCache[selectedUrl] || "Invalid_Type_URL"]: {
-      url: selectedUrl,
+    [ui_Cache[RandomSwitch] || "Inavlid_Type_URL"]: {
+      url: RandomSwitch,
     },
   };
 };
-
-global.createButtons = (inputMessage) => {
-  if (!inputMessage || Array.isArray(inputMessage)) {
-    return inputMessage || [];
+global.createButtons = (OnMessage) => {
+  if (!OnMessage || Array.isArray(OnMessage)) {
+    return OnMessage || [];
   }
-  const buttonRegex = /#button\s*:\s*([^|]+)\s*\|\s*display_text\s*:\s*([^|]+)(?:\s*\|\s*(id)\s*:\s*([^|]+))?(?:\s*\|\s*(copy_code)\s*:\s*([^|]+))?\/#/gi;
-  const buttonsArray = [];
-  let buttonMatch;
-  while ((buttonMatch = buttonRegex.exec(inputMessage)) !== null) {
+  const BtnValue =
+    /#button\s*:\s*([^|]+)\s*\|\s*display_text\s*:\s*([^|]+)(?:\s*\|\s*(id)\s*:\s*([^|]+))?(?:\s*\|\s*(copy_code)\s*:\s*([^|]+))?\/#/gi;
+  const JsonBtn = [];
+  let BtnContext;
+  while ((BtnContext = BtnValue.exec(OnMessage)) !== null) {
     try {
-      const buttonType = buttonMatch[1].trim();
-      const displayText = buttonMatch[2].trim();
-      const buttonId = buttonMatch[4] ? buttonMatch[4].trim() : "";
-      const copyCode = buttonMatch[6] ? buttonMatch[6].trim() : "";
-      let buttonObject = { display_text: displayText };
-
-      if (buttonType === "cta_copy") {
-        buttonObject = { display_text: displayText, id: buttonId, copy_code: copyCode };
-      } else if (buttonType === "cta_url") {
-        buttonObject = {
-          display_text: displayText,
-          url: (buttonId || "").replace(" /#", "").trim(),
-          merchant_url: copyCode || "https://www.google.com",
+      const OnBtnValue = BtnContext[1].trim();
+      const InBtnValue = BtnContext[2].trim();
+      const OffBtnValue = BtnContext[4] ? BtnContext[4].trim() : "";
+      let ActionBtn = BtnContext[6] ? BtnContext[6].trim() : "";
+      let TouchValue = {
+        display_text: InBtnValue,
+      };
+      if (OnBtnValue === "cta_copy") {
+        TouchValue = {
+          display_text: InBtnValue,
+          id: OffBtnValue,
+          copy_code: ActionBtn,
+        };
+      } else if (OnBtnValue === "cta_url") {
+        TouchValue = {
+          display_text: InBtnValue,
+          url: ("" + (OffBtnValue || "")).replace(" /#", "").trim(),
+          merchant_url: ActionBtn || "https://www.google.com",
         };
       } else {
-        buttonObject = { display_text: displayText, id: buttonId };
+        TouchValue = {
+          display_text: InBtnValue,
+          id: OffBtnValue,
+        };
       }
-
-      if (buttonType) {
-        buttonsArray.push({
-          name: buttonType,
-          buttonParamsJson: JSON.stringify(buttonObject),
+      if (OnBtnValue) {
+        JsonBtn.push({
+          name: OnBtnValue,
+          buttonParamsJson: JSON.stringify(TouchValue),
         });
       } else {
-        console.log("Button name missing in", buttonMatch[0]);
+        log("button_name missing in", BtnContext[0]);
       }
     } catch (error) {
       console.log(error);
     }
   }
-  return buttonsArray || [];
+  return JsonBtn || [];
 };
-
-global.sendButtons = async (message, context = {}, messageBody = [], customJid = false) => {
+global.sendButtons = async (
+  message,
+  context = {},
+  MessageBody = [],
+  OnBodyBtn = false
+) => {
   if (!message) {
-    throw "Message instance is required.";
+    throw "need m instance";
   }
-  const recipientJid = customJid || message.jid;
-  if (typeof context !== "object") {
+  let BtnJid = OnBodyBtn || message.jid;
+  if (typeof context != "object") {
     context = {};
   }
   context.messageId = context.messageId || message.bot.messageId();
-  if (typeof messageBody === "string") {
-    messageBody = createButtons(messageBody);
+  if (typeof MessageBody === "string") {
+    MessageBody = createButtons(MessageBody);
   }
   if (typeof context.buttons === "string" || Array.isArray(context.buttons)) {
-    messageBody = [...messageBody, ...(createButtons(context.buttons) || [])];
+    MessageBody = [...MessageBody, ...(createButtons(context.buttons) || [])];
   }
-  const { generateWAMessageFromContent, proto, prepareWAMessageMedia } = require("@whiskeysockets/baileys");
-  let mediaMessageData = {};
+  let {
+    generateWAMessageFromContent: MsgGen,
+    proto: ProtCol,
+    prepareWAMessageMedia: MediaMsg,
+  } = require("@whiskeysockets/baileys");
+  let OfDataMsg = {};
   try {
     if (typeof context.imageMessage === "object") {
-      mediaMessageData = { imageMessage: context.imageMessage };
+      OfDataMsg = {
+        imageMessage: context.imageMessage,
+      };
     } else if (typeof context.videoMessage === "object") {
-      mediaMessageData = { videoMessage: context.videoMessage };
+      OfDataMsg = {
+        videoMessage: context.videoMessage,
+      };
     } else {
-      let mediaMessage = false;
-      const mediaContext = context.image || context.video ? context : createUserInterface();
-      if (mediaContext.image) {
-        mediaMessage = (await prepareWAMessageMedia({ image: mediaContext.image || null }, { upload: message.bot.waUploadToServer })) || false;
-      } else if (mediaContext.video) {
-        mediaMessage = (await prepareWAMessageMedia({ video: mediaContext.video || null }, { upload: message.bot.waUploadToServer })) || false;
+      let OnDataMsg = false;
+      let ImgVidValue = context.image || context.video ? context : create_UI();
+      if (ImgVidValue.image) {
+        OnDataMsg =
+          (await MediaMsg(
+            {
+              image: ImgVidValue.image || log0,
+            },
+            {
+              upload: message.bot.waUploadToServer,
+            }
+          )) || false;
+      } else if (ImgVidValue.video) {
+        OnDataMsg =
+          (await MediaMsg(
+            {
+              image: ImgVidValue.video || log0,
+            },
+            {
+              upload: message.bot.waUploadToServer,
+            }
+          )) || false;
       }
-      if (mediaMessage) {
-        mediaMessageData = mediaMessage.imageMessage
-          ? { imageMessage: mediaMessage.imageMessage }
-          : mediaMessage.videoMessage
-          ? { videoMessage: mediaMessage.videoMessage }
+      if (OnDataMsg) {
+        OfDataMsg = OnDataMsg.imageMessage
+          ? {
+              imageMessage: OnDataMsg.imageMessage,
+            }
+          : OnDataMsg.videoMessage
+          ? {
+              videoMessage: OnDataMsg.videoMessage,
+            }
           : {};
       }
     }
   } catch (error) {
-    mediaMessageData = {};
+    OfDataMsg = {};
   }
-  const enhancedContext = {
-    ...(await message.bot.contextInfo(botName, message.senderName || ownerName)),
+  let FadedContext = {
+    ...(await message.bot.contextInfo(
+      botname,
+      message.senderName || ownername
+    )),
     ...(context.contextInfo || {}),
   };
-  const formattedMessage = generateWAMessageFromContent(
-    recipientJid,
+  let _0x5f08d6 = MsgGen(
+    BtnJid,
     {
       viewOnceMessage: {
         message: {
-          interactiveMessage: proto.Message.InteractiveMessage.create({
-            body: { text: context.text || context.body || context.caption || "Astro" },
-            footer: { text: context.footer || "αѕтα тє¢н тєαм" },
+          interactiveMessage: ProtCol.Message.InteractiveMessage.create({
+            body: {
+              text: context.text || context.body || context.caption || "Astro",
+            },
+            footer: {
+              text: context.footer || "αѕтα тє¢н тєαм",
+            },
             header: {
-              ...(mediaMessageData || {}),
-              hasMediaAttachment: mediaMessageData.imageMessage || mediaMessageData.videoMessage ? true : false,
+              ...(OfDataMsg || {}),
+              hasMediaAttachment:
+                OfDataMsg.imageMessage || OfDataMsg.videoMessage ? true : false,
               ...(context.header || {}),
             },
-            contextInfo: enhancedContext,
-            nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
-              buttons: messageBody,
-            }),
+            contextInfo: FadedContext,
+            nativeFlowMessage:
+              ProtCol.Message.InteractiveMessage.NativeFlowMessage.create({
+                buttons: MessageBody,
+              }),
           }),
           messageContextInfo: {
             deviceListMetadata: {},
@@ -172,10 +224,11 @@ global.sendButtons = async (message, context = {}, messageBody = [], customJid =
     },
     context
   );
-  await message.bot.relayMessage(recipientJid, formattedMessage.message, { messageId: context.messageId });
-  return formattedMessage;
+  await message.bot.relayMessage(BtnJid, _0x5f08d6.message, {
+    messageId: context.messageId,
+  });
+  return _0x5f08d6;
 };
-
 bot(
   {
     cmdname: "menu",
@@ -186,74 +239,152 @@ bot(
     try {
       const { commands } = require("../lib");
 
-      let menuHeader, menuSubHeader, menuFooter, categoryHeaderStart, categoryHeaderEnd, commandLine, categoryFooter;
-      let menuVersion = 1; // Choose one menu style
-      if (menuOption === "") {
-        menuVersion = Math.floor(Math.random() * 4) + 1;
+      var MenuTopHeader;
+      var MenuSideHeader;
+      var MenuTopFooter;
+      var CategoryStartHeader;
+      var CategoryEndHeader;
+      var CmdNameLine;
+      var CategoryFullEnd;
+      let MenuType = 0;
+      if (menu === "") {
+        MenuType = Math.floor(Math.random() * 4) + 1;
       }
-      if (menuVersion === 1 || menuOption.trim().startsWith("1") || menuOption.toLowerCase().includes("v1")) {
-        menuHeader = "╭━━━〔 *" + botName + "* 〕━━━┈⊷";
-        menuSubHeader = "┃✵│";
-        menuFooter = "┃✵╰──────────────\n╰━━━━━━━━━━━━━━━┈⊷";
-        categoryHeaderStart = "╭─────────────┈⊷\n│「";
-        categoryHeaderEnd = "」\n╰┬────────────┈⊷";
-        commandLine = "││◦➛";
-        categoryFooter = "│╰────────────┈⊷\n╰─────────────┈⊷";
+      if (
+        MenuType == 1 ||
+        menu.trim().startsWith("1") ||
+        menu.toLowerCase().includes("v1")
+      ) {
+        MenuTopHeader = "╭━━━〔 *" + botname + "* 〕━━━┈⊷";
+        MenuSideHeader = "┃✵│";
+        MenuTopFooter = "┃✵╰──────────────\n╰━━━━━━━━━━━━━━━┈⊷";
+        CategoryStartHeader = "╭─────────────┈⊷\n│「";
+        CategoryEndHeader = "」\n╰┬────────────┈⊷";
+        CmdNameLine = "││◦➛";
+        CategoryFullEnd = "│╰────────────┈⊷\n╰─────────────┈⊷";
+      } else if (
+        MenuType == 2 ||
+        menu.trim().startsWith("2") ||
+        menu.toLowerCase().includes("v2")
+      ) {
+        MenuTopHeader = "╭═══ *" + botname + "*  ═══⊷\n┃❃╭──────────────";
+        MenuSideHeader = "┃❃│";
+        MenuTopFooter = "┃❃╰───────────────\n╰═════════════════⊷";
+        CategoryStartHeader = "╭─❏";
+        CategoryEndHeader = "❏";
+        CmdNameLine = "┃❃│";
+        CategoryFullEnd = "┃❃╰───────────────\n╰═════════════════⊷";
+      } else {
+        MenuTopHeader = "╭═══〘  " + botname + "  〙═══⊷❍\n┃✰╭──────────────";
+        MenuSideHeader = "┃✰│";
+        MenuTopFooter = "┃✰╰───────────────\n╰═════════════════⊷";
+        CategoryStartHeader = "╭════〘";
+        CategoryEndHeader = "〙════⊷❍";
+        CmdNameLine = "┃✰│";
+        CategoryFullEnd = "┃✰╰─────────────────❍\n╰══════════════════⊷❍";
       }
-
-      const commandGroups = {};
-      commands.forEach((cmd) => {
-        if (!cmd.dontAddCommandList && cmd.pattern) {
-          if (!commandGroups[cmd.category]) {
-            commandGroups[cmd.category] = [];
+      const cmdlets = {};
+      commands.map(async (query, data) => {
+        if (query.dontAddCommandList === false && query.pattern !== undefined) {
+          if (!cmdlets[query.category]) {
+            cmdlets[query.category] = [];
           }
-          commandGroups[cmd.category].push(cmd.pattern);
+          cmdlets[query.category].push(query.pattern);
         }
       });
-
-      const menuFancyOptions = [1, 22, 23, 1, 36, 35, 48, 1, 42, 55, 56];
-      const fancyStyle = parseInt(menuStyle || "") || menuFancyOptions[Math.floor(Math.random() * menuFancyOptions.length)];
-
-      let menuContent = menuHeader + "\n" + menuSubHeader + (menuVersion === 3 ? ` ᴜᴘᴛɪᴍᴇ: ${runtime(process.uptime())}\n` : "");
-      const osStatus = `${botName.toUpperCase()} ${os.platform()} [${formatp(os.totalmem() - os.freemem())}/${formatp(os.totalmem())}]`.trim();
-      if (menuVersion !== 1) {
-        menuContent += menuSubHeader + "│" + menuSubHeader + (menuVersion === 4 ? `${botName} ${menuOption}` : osStatus) + "\n";
+      let MenuFancys = [1, 22, 23, 1, 36, 35, 48, 1, 42, 55, 56];
+      let text =
+        parseInt(menu_fancy || "") ||
+        MenuFancys[Math.floor(Math.random() * MenuFancys.length)];
+      const currentTime = message.time;
+      const currentDate = message.date;
+      let BotInfoOnMenu =
+        MenuTopHeader +
+        "\n" +
+        MenuSideHeader +
+        " ＵＳＥＲ:- " +
+        ownername +
+        "\n" +
+        MenuSideHeader +
+        " ＭＯＤＥ:- " +
+        Config.WORKTYPE +
+        "\n" +
+        MenuSideHeader +
+        " ＣＭＤＳ:- " +
+        commands.length +
+        "\n" +
+        MenuSideHeader +
+        " ＡＬＩＶＥ:- " +
+        runtime(process.uptime()) +
+        "\n" +
+        MenuSideHeader +
+        " ＲＡＭ:- " +
+        formatp(os.totalmem() - os.freemem()) +
+        "\n" +
+        MenuSideHeader +
+        " ＴＩＭＥ:- " +
+        currentTime +
+        "\n" +
+        MenuTopFooter +
+        "\n\t```❑ ᴘᴀᴛᴄʜ 𝟹.𝟻.𝟶 ❑```\n " +
+        readmore +
+        "\n";
+      for (const Texts in cmdlets) {
+        BotInfoOnMenu +=
+          CategoryStartHeader +
+          " *" +
+          fancytext(Texts, text) +
+          "* " +
+          CategoryEndHeader +
+          "\n";
+        if (match.toLowerCase() == Texts.toLowerCase()) {
+          BotInfoOnMenu =
+            CategoryStartHeader +
+            " *" +
+            fancytext(Texts, text) +
+            "* " +
+            CategoryEndHeader +
+            "\n";
+          for (const randomlate of cmdlets[Texts]) {
+            BotInfoOnMenu +=
+              CmdNameLine + " " + fancytext(randomlate, text) + "\n";
+          }
+          BotInfoOnMenu += CategoryFullEnd + "\n";
+          break;
+        } else {
+          for (const _0x34d05f of cmdlets[Texts]) {
+            BotInfoOnMenu +=
+              CmdNameLine + " " + fancytext(_0x34d05f, text) + "\n";
+          }
+          BotInfoOnMenu += CategoryFullEnd + "\n";
+        }
       }
-      menuContent += menuSubHeader + "✵╭───⊷╮\n" + menuSubHeader + "✵│ Owner: " + ownerName + "\n" + menuSubHeader + "✵╰───⊷╯";
-      for (const category in commandGroups) {
-        menuContent += "\n" + categoryHeaderStart + " " + category + " " + categoryHeaderEnd;
-        commandGroups[category].forEach((pattern) => {
-          menuContent += "\n" + commandLine + " " + commandPrefix + pattern;
-        });
-        menuContent += "\n" + categoryFooter;
-      }
-      menuContent += "\n" + menuFooter;
-      menuContent = menuContent.replace(/"/g, "「").replace(/"/g, "」").trim();
-      menuContent = await fancytext(menuContent, fancyStyle);
-      const menuContext = {
-        text: menuContent,
-        contextInfo: {},
+      BotInfoOnMenu += caption;
+      let Important = {
+        caption: BotInfoOnMenu,
       };
-      await sendButtons(message, menuContext, [{ name: "cta_url", buttonParamsJson: JSON.stringify({ display_text: "Owner", url: Config.LINK }) }]);
+      if (/1|buttons|btn/gi.test(BUTTONS) && message.device !== "web") {
+        await sendButtons(message, {
+          caption: BotInfoOnMenu,
+          buttons:
+            "\n            #button:cta_url | display_text : Get Your Own| id:" +
+            github +
+            " /# \n            #button:cta_url | display_text : Support| id:" +
+            SupportGc +
+            " /# \n            #button:cta_url | display_text : Channel | id:" +
+            ChannelLink +
+            " /#            \n            #button:cta_url | display_text : Full Support | id:" +
+            tglink +
+            " /#            \n            ",
+        });
+      } else {
+        await message.sendUi(message.chat, Important, message);
+      }
     } catch (error) {
-      console.log(error);
+      await message.error(error + "\nCommand:menu", error);
     }
   }
 );
-
-bot(
-  {
-    cmdname: "menubuttons",
-    desc: "Menu buttons test",
-    type: "user",
-  },
-  async (message, match) => {
-    try {
-      const buttonsTestMessage = "Testing #button : cta_url | display_text : Visit Us | url : https://example.com/#";
-      await sendButtons(message, {}, buttonsTestMessage);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
-
+let tglink = "https://t.me/+tBdXzBsRBAMzNmFk";
+let ChannelLink = "https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z";
+let SupportGc = "https://chat.whatsapp.com/Fb0ejJQeiPA08T0FB5H20g";
