@@ -1,9 +1,9 @@
-const { bot, fancytext, runtime, formatp, prefix, } = require('../lib')
+const { bot, fancytext, runtime, formatp, prefix } = require('../lib')
 const config = require('../config')
 const axios = require('axios')
 const os = require('os')
 const speed = require('performance-now')
-const { URLSearchParams } = require('url');
+const { URLSearchParams } = require('url')
 bot(
  {
   pattern: 'alive',
@@ -45,7 +45,7 @@ bot(
 
      const end = new Date().getTime()
      const pingSeconds = (end - start) / 1000
-     const captionText = `ʀᴇʟᴇᴀsᴇ ᴠ𝟽\n\n*ʀᴇsᴘᴏɴsᴇ ʀᴀᴛᴇ:* ${pingSeconds} seconds\n\n*Fact:*\n${fact.result.fact}`
+     const captionText = `ʀᴇʟᴇᴀsᴇ ᴠ𝟽\n\n*ʀᴇsᴘᴏɴsᴇ ʀᴀᴛᴇ:* ${pingSeconds} seconds\n\n\n${fact.result.fact}`
 
      return { image: imageBuffer.data, caption: captionText }
     },
@@ -62,7 +62,7 @@ bot(
 
      const end = new Date().getTime()
      const pingSeconds = (end - start) / 1000
-     const captionText = `ʀᴇʟᴇᴀsᴇ ᴠ𝟽\n\n*ʀᴇsᴘᴏɴsᴇ ʀᴀᴛᴇ:* ${pingSeconds} seconds\n\n*Line:*\n${line.result}`
+     const captionText = `ʀᴇʟᴇᴀsᴇ ᴠ𝟽\n\n*ʀᴇsᴘᴏɴsᴇ ʀᴀᴛᴇ:* ${pingSeconds} seconds\n\n\n${line.result}`
 
      return { image: imageBuffer.data, caption: captionText }
     },
@@ -80,14 +80,14 @@ bot(
 
 bot(
  {
-  pattern: 'list',
+  pattern: 'cmds',
   desc: 'List menu',
   category: 'general',
  },
  async (context) => {
   try {
    const { commands } = require('../lib')
-   let commandInfo = '\n\t*ᴀsᴛᴀ ᴍᴅ ᴄᴏᴍᴍᴀɴᴅs ɪɴғᴏ*\n'
+   let commandInfo = '\n\t*ᴄᴏᴍᴍᴀɴᴅs ɪɴғᴏ*\n'
    commands.forEach((command, index) => {
     if (command.pattern) {
      commandInfo += `*${index + 1} ${fancytext(command.pattern, 1)}*\n`
@@ -143,7 +143,7 @@ bot(
  },
  async (context) => {
   const startTime = new Date().getTime()
-  const { key: messageKey } = await context.reply('*hmm...*')
+  const { key: messageKey } = await context.reply('_...._')
   const endTime = new Date().getTime()
   const pingTime = endTime - startTime
   await context.send(`*ʟᴀᴛᴇɴᴄʏ: ${pingTime} ms*`, { edit: messageKey }, '', context)
@@ -288,7 +288,7 @@ bot(
   try {
    const message = context.reply_message
    if (!message || !text) {
-    return await context.reply(message ? '*Please provide text to set caption!*' : '*Please reply to a message with caption | filename*')
+    return await context.reply('_Need Text_')
    }
 
    if (message.image || message.video || message.mtype.includes('document')) {
@@ -300,7 +300,7 @@ bot(
     message.message[message.mtype].fileName = fileName
     await context.bot.copyNForward(context.chat, message)
    } else {
-    return await context.reply('Please reply to an audio/video/document message.')
+    return await context.reply('_Reply Audio/Video/Doc_')
    }
   } catch (error) {
    await context.error(`Error: ${error}\n\nCommand: caption`, error, false)
@@ -386,78 +386,89 @@ bot(
  }
 )
 
-bot({
-  pattern: "ip",
-  type: "misc",
-  info: "Get the bot's IP address"
-}, async (context) => {
+bot(
+ {
+  pattern: 'ip',
+  type: 'misc',
+  info: "Get the bot's IP address",
+ },
+ async (context) => {
   try {
-    const { data: ipAddress } = await axios.get("https://api.ipify.org/");
-    const responseMessage = ipAddress 
-      ? `*Bot's IP address is: _${ipAddress}_*` 
-      : "_No response from server!_";
-    context.send(responseMessage);
+   const { data: ipAddress } = await axios.get('https://api.ipify.org/')
+   const responseMessage = ipAddress ? `*Bot's IP address is: _${ipAddress}_*` : '_No response from server!_'
+   context.send(responseMessage)
   } catch (error) {
-    await context.error(`Error: ${error}\n\nCommand: myip`, error, false);
+   await context.error(`Error: ${error}\n\nCommand: myip`, error, false)
   }
-});
+ }
+)
 
-const captureScreenshot = (url, device = "desktop") => {
-  return new Promise((resolve, reject) => {
-    const screenshotApiUrl = "https://www.screenshotmachine.com/capture.php";
-    const requestData = {
-      url,
-      device,
-      cacheLimit: 0
-    };
+const captureScreenshot = (url, device = 'desktop') => {
+ return new Promise((resolve, reject) => {
+  const screenshotApiUrl = 'https://www.screenshotmachine.com/capture.php'
+  const requestData = {
+   url,
+   device,
+   cacheLimit: 0,
+  }
 
-    axios.post(screenshotApiUrl, new URLSearchParams(requestData), {
-      headers: {
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-      }
-    })
-    .then(response => {
-      const cookies = response.headers["set-cookie"];
-      if (response.data.status === "success") {
-        axios.get(`https://www.screenshotmachine.com/${response.data.link}`, {
-          headers: { cookie: cookies.join("") },
-          responseType: "arraybuffer"
-        })
-        .then(({ data }) => {
-          resolve({ status: 200, result: data });
-        });
-      } else {
-        reject({
-          status: 404,
-          statusText: "Link Error",
-          message: response.data
-        });
-      }
-    })
-    .catch(reject);
-  });
-};
-
-bot({
-  cmdname: "ss",
-  type: "misc",
-  info: "Get a screenshot of a webpage"
-}, async (context, args) => {
-  try {
-    const url = args.split(" ")[0].trim();
-    if (!url) {
-      return await context.reply(`*Need URL! Use ${prefix}ss https://github.com/Astropeda/Asta-Md*`);
-    }
-
-    const screenshotResponse = await captureScreenshot(url);
-    if (screenshotResponse.status === 200) {
-      return await context.send(screenshotResponse.result, {
-        caption: config.caption
-      }, "amdimg", context);
+  axios
+   .post(screenshotApiUrl, new URLSearchParams(requestData), {
+    headers: {
+     'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    },
+   })
+   .then((response) => {
+    const cookies = response.headers['set-cookie']
+    if (response.data.status === 'success') {
+     axios
+      .get(`https://www.screenshotmachine.com/${response.data.link}`, {
+       headers: { cookie: cookies.join('') },
+       responseType: 'arraybuffer',
+      })
+      .then(({ data }) => {
+       resolve({ status: 200, result: data })
+      })
     } else {
-      await context.send("_No response from server!_");
+     reject({
+      status: 404,
+      statusText: 'Link Error',
+      message: response.data,
+     })
     }
+   })
+   .catch(reject)
+ })
+}
+
+bot(
+ {
+  pattern: 'ss',
+  type: 'misc',
+  info: 'Get a screenshot of a webpage',
+ },
+ async (context, args) => {
+  try {
+   const url = args.split(' ')[0].trim()
+   if (!url) {
+    return await context.reply(`_Need Website Link?_`)
+   }
+
+   const screenshotResponse = await captureScreenshot(url)
+   if (screenshotResponse.status === 200) {
+    return await context.send(
+     screenshotResponse.result,
+     {
+      caption: config.caption,
+     },
+     'amdimg',
+     context
+    )
+   } else {
+    await context.send('_No response from server!_')
+   }
   } catch (error) {
-    await context.error(`Error: ${error}\n\nCommand: ss`, error, "*Request Denied!*");
+   await context.error(`Error: ${error}\n\nCommand: ss`, error, '*Request Denied!*')
   }
-});
+ }
+)
