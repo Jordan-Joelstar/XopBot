@@ -3,7 +3,7 @@ const { handleMenuCommand } = require('./buttons')
 
 bot(
  {
-  pattern: 'null',
+  pattern: 'menu',
   desc: 'Show All Commands',
   dontAddCommandList: true,
  },
