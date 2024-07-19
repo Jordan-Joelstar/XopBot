@@ -156,9 +156,12 @@
     let failedAttempts = 0
     let lastAttemptTime = 0
     let cooldownTimer = null
+    let accessGranted = false
 
     form.addEventListener('submit', async (e) => {
      e.preventDefault()
+     if (accessGranted) return // If access is already granted, do nothing
+
      const username = input.value.trim()
 
      if (!username) {
@@ -205,7 +208,12 @@
        setMessage('Valid: User has forked the repository', true)
        button.disabled = false
        button.textContent = 'Get Access'
-       button.onclick = () => (window.location.href = 'https://example.com')
+       accessGranted = true
+       button.onclick = () => {
+        window.location.href = 'https://example.com'
+        accessGranted = false
+        button.textContent = 'Check Fork'
+       }
        failedAttempts = 0
       } else {
        setMessage("User hasn't forked the repository", false)
@@ -259,7 +267,7 @@
     }
 
     input.addEventListener('input', () => {
-     if (cooldownTimer === null) {
+     if (cooldownTimer === null && !accessGranted) {
       if (messageDiv.textContent) {
        messageDiv.textContent = ''
        messageDiv.className = ''
