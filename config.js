@@ -1,35 +1,17 @@
-const toBool = (x) => x == 'true'
 const { Sequelize } = require('sequelize')
-const { existsSync } = require('fs')
-const path = require('path')
-const configPath = path.join(__dirname, './config.env')
-const databasePath = path.join(__dirname, './database.db')
-const fs = require('fs-extra')
-if (fs.existsSync('.env')) require('dotenv').config({ path: __dirname + '/.env' })
-global.port = process.env.PORT
-global.appUrl = process.env.APP_URL || ''
-global.email = 'astromedia0010@gmail.com'
-global.location = 'Lahore,Pakistan.'
-global.mongodb = process.env.MONGODB_URI || ''
-global.allowJids = process.env.ALLOW_JID || 'null'
-global.blockJids = process.env.BLOCK_JID || 'null'
-global.DATABASE_URL = process.env.DATABASE_URL || ''
-global.github = process.env.GITHUB || 'https://github.com/Astropeda/Asta-Md'
-global.gurl = process.env.URL || 'https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z'
-global.website = process.env.WEBSITE || 'https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z'
-global.THUMB_IMAGE = process.env.THUMB_IMAGE || process.env.IMAGE || 'https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/lib/assets/logo.jpeg'
-global.devs = '2348039607375'
-global.sudo = process.env.SUDO || '2348039607375'
-global.owner = process.env.OWNER_NUMBER || '2348039607375'
-global.gdbye = process.env.GOODBYE || 'false'
-global.wlcm = process.env.WELCOME || 'false'
-global.warncount = process.env.WARN_COUNT || 3
-global.disablepm = process.env.DISABLE_PM || 'false'
-;(global.disablegroup = process.env.DISABLE_GROUPS || 'false'), (global.MsgsInLog = process.env.MSGS_IN_LOG || 'true')
-global.userImages = process.env.USER_IMAGES || 'https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpeg'
+const fs = require('fs')
 
+if (fs.existsSync('config.env')) require('dotenv').config({ path: './config.env', override: true })
+function convertToBool(text, fault = 'true') {
+ return text === fault ? true : false
+}
+
+const toBool = (x) => (x && x.toLowerCase() === 'true') || false
 global.SESSION_ID = process.env.SESSION_ID || ''
 module.exports = {
+ DATABASE_URL: DATABASE_URL,
+ DATABASE: DATABASE_URL === './database.db' ? new Sequelize({ dialect: 'sqlite', storage: DATABASE_URL, logging: false }) : new Sequelize(DATABASE_URL, { dialect: 'postgres', ssl: true, protocol: 'postgres', dialectOptions: { native: true, ssl: { require: true, rejectUnauthorized: false } }, logging: false }),
+ BRAIN_ID: process.env.BRAIN_ID || 'bid=168613&key=EfbnX54Iy9PFIFp3',
  MSG_STYLE: process.env.STYLE || '0',
  WA_PRESENCE: process.env.WAPRESENCE || 'online',
  AUTO_SAVE_STATUS_FROM: process.env.AUTO_STATUS_FROM || '',
@@ -69,3 +51,24 @@ fs.watchFile(file, () => {
  delete require.cache[file]
  require(file)
 })
+
+global.port = process.env.PORT
+global.appUrl = process.env.APP_URL || ''
+global.email = 'astromedia0010@gmail.com'
+global.location = 'Lahore,Pakistan.'
+global.mongodb = process.env.MONGODB_URI || ''
+global.allowJids = process.env.ALLOW_JID || 'null'
+global.blockJids = process.env.BLOCK_JID || 'null'
+global.github = process.env.GITHUB || 'https://github.com/Astropeda/Asta-Md'
+global.gurl = process.env.URL || 'https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z'
+global.website = process.env.WEBSITE || 'https://whatsapp.com/channel/0029VaPGt3QEwEjpBXT4Rv0z'
+global.THUMB_IMAGE = process.env.THUMB_IMAGE || process.env.IMAGE || 'https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/lib/assets/logo.jpeg'
+global.devs = '2348039607375'
+global.sudo = process.env.SUDO || '2348039607375'
+global.owner = process.env.OWNER_NUMBER || '2348039607375'
+global.gdbye = process.env.GOODBYE || 'false'
+global.wlcm = process.env.WELCOME || 'false'
+global.warncount = process.env.WARN_COUNT || 3
+global.disablepm = process.env.DISABLE_PM || 'false'
+;(global.disablegroup = process.env.DISABLE_GROUPS || 'false'), (global.MsgsInLog = process.env.MSGS_IN_LOG || 'true')
+global.userImages = process.env.USER_IMAGES || 'https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo1.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo2.jpeg,https://raw.githubusercontent.com/AstroAnalytics/XopBot/main/source/images/logo3.jpeg'
