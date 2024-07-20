@@ -86,8 +86,7 @@ bot(
 
 bot(
  {
-  pattern: 'chatpin',
-  alias: ['pinchat'],
+  pattern: 'pin',
   fromMe: true,
   desc: 'pin a chat',
   type: 'chats',
@@ -110,7 +109,6 @@ bot(
 bot(
  {
   pattern: 'unpin',
-  alias: ['unpinchat', 'chatunpin'],
   fromMe: true,
   desc: 'unpin a msg',
   type: 'chats',
@@ -141,7 +139,6 @@ bot(
   try {
    let msg = await message.react('🍁')
    await message.bot.chatModify({ markRead: true, lastMessages: [message] }, message.jid)
-   //await message.send('_Chat mark as Readed!_')
   } catch (e) {
    message.error(`${e}\n\nCommand : markread`, e, false)
   }
@@ -160,8 +157,6 @@ bot(
    let msg = await message.send('🍁', {}, 'react')
    console.log({ msg })
    await message.bot.chatModify({ markRead: false, lastMessages: [message] }, message.jid)
-
-   //await message.send('_Chat mark as UnRead!_')
   } catch (e) {
    message.error(`${e}\n\nCommand : markunread`, e, false)
   }
@@ -341,7 +336,7 @@ bot(
 
 bot(
  {
-  pattern: 'groupadd',
+  pattern: 'gcadd',
   fromMe: true,
   desc: 'privacy for group add',
   type: 'privacy',
