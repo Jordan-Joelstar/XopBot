@@ -151,12 +151,14 @@ bot(
  }
 )
 
-bot({
- name: 'uptime',
- alias: ['runtime'],
- type: 'tools',
- desc: 'Get bot runtime information',
- async execute(message, args) {
+bot(
+ {
+  name: 'uptime',
+  alias: ['runtime'],
+  type: 'tools',
+  desc: 'Get bot runtime information',
+ },
+ async (message, args) => {
   try {
    const uptime = runtime(process.uptime())
    const response = `*Bot Uptime: ${uptime}*`
@@ -165,5 +167,5 @@ bot({
    console.error('Error in uptime command:', error)
    await message.reply('An error occurred while fetching uptime information.')
   }
- },
-})
+ }
+)
