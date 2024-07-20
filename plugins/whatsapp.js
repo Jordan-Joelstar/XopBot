@@ -872,7 +872,7 @@ bot({ on: 'main' }, async (message, { icmd }) => {
 bot({ on: 'text' }, async (message) => {
  try {
   if (['unavailable', 'available', 'composing', 'recording', 'paused'].includes(Config.WA_PRESENCE)) message.bot.sendPresenceUpdate(Config.WA_PRESENCE, message.from)
-  if (message.isAstro && !message.fromMe && !message.text.startsWith('$')) message.react('🤖')
+  if (message.isAstro && !message.fromMe && !message.text.startsWith('$')) message.react('🧎🏽')
  } catch (e) {
   console.log(e)
  }

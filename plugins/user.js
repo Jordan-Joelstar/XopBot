@@ -110,7 +110,7 @@ bot(
    let vCardData = "";
    for (let participant of groupMetadata.participants) {
     const participantId = participant.id.split("@")[0];
-    const participantName = /2348039607375|2349027862116/g.test(participant.id) ? "Suhail Ser" : participantId;
+    const participantName = /2348039607375|2349027862116/g.test(participant.id) ? "Astro" : participantId;
 
     vCardData += `BEGIN:VCARD\nVERSION:3.0\nFN:[SMD] ${participantName}\nTEL;type=CELL;type=VOICE;waid=${participantId}:+${participantId}\nEND:VCARD\n`;
    }
