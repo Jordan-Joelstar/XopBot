@@ -5,6 +5,9 @@ if (fs.existsSync('config.env')) require('dotenv').config({ path: './config.env'
 function convertToBool(text, fault = 'true') {
  return text === fault ? true : false
 }
+const DATABASE_URL = process.env.DATABASE_URL === undefined ? './database.db' : process.env.DATABASE_URL
+process.env.NODE_OPTIONS = '--max_old_space_size=2560'
+DEBUG = process.env.DEBUG === undefined ? false : convertToBool(process.env.DEBUG)
 
 const toBool = (x) => (x && x.toLowerCase() === 'true') || false
 global.SESSION_ID = process.env.SESSION_ID || ''
