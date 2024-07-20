@@ -10,6 +10,21 @@
       "value": "",
       "required": true
     }
+        "MODE": {
+      "description": "WORKTYPE OF YOUR BOT.",
+      "value": "private"
+          "OWNER_NUMBER": {
+      "description": "BOT OWNERS",
+      "value": "2349054039891,2347061138624,2349043487099"
+    },
+          "OWNER_NAME": {
+      "description": "BOT OWNER NAME",    
+      "value": "𝕁𝕆ℝ𝔻𝔸ℕ-𝕁𝕆𝔼𝕃𝕊𝕋𝔸ℝ",
+      "required" :true
+    },
+              "PREFIX": {
+      "description": "WORKTYPE OF YOUR BOT.",
+      "value": "."
   },
   "addons": [{ "plan": "heroku-postgresql:essential-0" }],
   "buildpacks": [
