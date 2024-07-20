@@ -396,7 +396,6 @@ bot(
   pattern: 'diff',
   desc: 'Get difference of participants in two groups',
   category: 'owner',
-  
  },
  async (context, text) => {
   try {
@@ -447,7 +446,6 @@ bot(
   pattern: 'invite',
   desc: 'Get group link.',
   category: 'group',
-  
  },
  async (context) => {
   try {
@@ -469,7 +467,6 @@ bot(
   pattern: 'revoke',
   desc: 'Revoke group link.',
   category: 'group',
-  
  },
  async (context) => {
   try {
@@ -490,7 +487,6 @@ bot(
   pattern: 'tagall',
   desc: 'Tags every person of group.',
   category: 'group',
-  
  },
  async (context, message) => {
   try {
@@ -867,8 +863,8 @@ bot(
    if (!context.isGroup) return context.reply(tlang().group)
    if (!context.isAdmin && !context.isCreator) return context.reply(tlang().admin)
 
-   const adminList = context.admins.map((admin) => ` *|  @${admin.id.split('@')[0]}*`).join('\n')
-   const tagMessage = `\n▢ Tag by: @${context.sender.split('@')[0]}\n${message ? '≡ Message: ' + message : ''}\n\n*┌─⊷ GROUP ADMINS*\n${adminList}\n*└───────────⊷*\n\n${Config.caption}`.trim()
+   const admins = context.admins.map((admin) => ` *|  @${admin.id.split('@')[0]}*`).join('\n')
+   const tagMessage = `\n▢ Tag by: @${context.sender.split('@')[0]}\n${message ? '≡ Message: ' + message : ''}\n\n*┌─⊷ GROUP ADMINS*\n${admins}\n*└───────────⊷*\n\n${Config.caption}`.trim()
 
    await context.bot.sendMessage(context.chat, {
     text: tagMessage,
@@ -889,32 +885,27 @@ bot(
  async (context, message) => {
   try {
    if (!context.isGroup) return context.reply(tlang().group)
-   if (!context.isBotAdmin) {
-    return context.reply(`*_I'm Not Admin In This Group, ${context.isAstro ? 'Master' : 'Sir'}_*`)
-   }
+   if (!context.isBotAdmin) return context.reply(tlang().botAdmin)
    if (!context.isAdmin) return context.reply(tlang().admin)
 
-   const userId = context.quoted ? context.quoted.sender : context.mentionedJid[0] || message.replace(/[^0-9]/g, '') + '@s.whatsapp.net'
-   if (!userId) return context.reply('*_Uhh Dear, Please Provide A User._*')
+   const userId = context.quoted?.sender || context.mentionedJid[0] || `${message.replace(/\D/g, '')}@s.whatsapp.net`
+   if (!userId) return context.reply('*_Provide A User._*')
 
-   try {
-    await context.bot.groupParticipantsUpdate(context.chat, [userId], 'add')
-    await context.reply('*_User Added to Group!!_*')
-    context.react('✨')
-   } catch {
-    context.react('❌')
-    await context.bot.sendMessage(
-     userId,
-     {
-      text: `*_Here's The Group Invite Link!!_*\n\n @${context.sender.split('@')[0]} Wants to add you to the group\n\n*_https://chat.whatsapp.com/${await context.bot.groupInviteCode(context.chat)}_*\n ---------------------------------  \n*_Join If You Feel Free?_*`,
-      mentions: [context.sender],
-     },
-     { quoted: context }
-    )
-    await context.reply("*_Can't add user, Invite sent in pm_*")
-   }
-  } catch (error) {
-   await context.error(`${error}\n\ncommand: add`, error)
+   await context.bot.groupParticipantsUpdate(context.chat, [userId], 'add')
+   await context.reply('*_User Added to Group!_*')
+   context.react('✨')
+  } catch {
+   context.react('❌')
+   const link = await context.bot.groupInviteCode(context.chat)
+   await context.bot.sendMessage(
+    userId,
+    {
+     text: `*_Here's The Group Invite Link!!_*\n\n@${context.sender.split('@')[0]} wants to add you.\n*_https://chat.whatsapp.com/${link}_*\n*_Join If You Feel Free?_*`,
+     mentions: [context.sender],
+    },
+    { quoted: context }
+   )
+   await context.reply('*_Invite Sent_*')
   }
  }
 )
@@ -928,18 +919,18 @@ bot(
  async (context) => {
   try {
    if (!context.isGroup) return context.reply(tlang().group)
-   if (!context.isBotAdmin) return context.reply("*_I'm Not Admin In This Group, Idiot_*")
+   if (!context.isBotAdmin) return context.reply(tlang.botAdmin)
    if (!context.isAdmin) return context.reply(tlang().admin)
 
-   const targetId = context.mentionedJid[0] || (context.reply_message && context.reply_message.sender)
-   if (!targetId) return context.reply('*Uhh dear, reply/mention a User*')
-   if (context.checkBot(targetId)) return context.reply("*_Huh, I can't demote my creator!!_*")
+   const targetId = context.mentionedJid[0] || context.reply_message?.sender
+   if (!targetId) return context.reply('*Reply User*')
+   if (context.checkBot(targetId)) return context.reply("*_Can't Demote Dev_*")
 
    try {
     await context.bot.groupParticipantsUpdate(context.chat, [targetId], 'demote')
-    await context.reply('*_User demoted successfully!!_*')
+    await context.reply('*_Removed User From Admin_*')
    } catch {
-    await context.reply('*_Can’t demote user, try manually, Sorry!!_*')
+    await context.reply('*_Error_*')
    }
   } catch (error) {
    await context.error(`${error}\n\ncommand: demote`, error)
@@ -955,21 +946,16 @@ bot(
  },
  async (context) => {
   try {
-   if (!context.reply_message) return context.reply('*_Please reply to a message!!!_*')
+   const msg = context.reply_message
+   if (!msg) return context.reply('*_Reply Message_*')
 
-   const message = context.reply_message
-   if (message.fromMe && context.isCreator) {
-    return message.delete()
-   } else if (context.isGroup) {
-    if (!context.isBotAdmin) {
-     return context.reply("*I can't delete messages without being an Admin.*")
-    }
-    if (!context.isAdmin) return context.reply(tlang().admin)
+   if (msg.fromMe && context.isCreator) return msg.delete()
 
-    await message.delete()
-   } else {
-    return context.reply(tlang().owner)
-   }
+   if (!context.isGroup) return context.reply(tlang().owner)
+   if (!context.isBotAdmin) return context.reply(tlang.botAdmin)
+   if (!context.isAdmin) return context.reply(tlang().admin)
+
+   await msg.delete()
   } catch (error) {
    await context.error(`${error}\n\ncommand: del`, error)
   }
@@ -991,15 +977,16 @@ bot(
 
    const groups = await context.bot.groupFetchAllParticipating()
    const groupIds = Object.values(groups).map((group) => group.id)
+   const estimatedTime = groupIds.length * 1.5
 
-   await context.send(`*_Sending Broadcast To ${groupIds.length} Group Chats. Estimated Time: ${groupIds.length * 1.5} seconds_*`)
+   await context.send(`*_Sending Broadcast To ${groupIds.length} Group Chats. Estimated Time: ${estimatedTime} seconds_*`)
 
-   const broadcastMessage = `*--❗${tlang().title} Broadcast❗--*\n\n*🍀Message:* ${text}`
+   const broadcastMessage = `*--❗Broadcast❗--*\n\n*🍀Message:* ${text}`
    const messageOptions = {
     forwardingScore: 999,
     isForwarded: true,
     externalAdReply: {
-     title: 'Suhail-Md Broadcast',
+     title: 'Broadcast',
      body: context.senderName,
      renderLargerThumbnail: true,
      thumbnail: log0,
@@ -1018,7 +1005,7 @@ bot(
     }
    }
 
-   return await context.reply(`*Broadcast sent to ${groupIds.length} groups successfully*`)
+   await context.reply(`*Broadcast sent to ${groupIds.length} groups successfully*`)
   } catch (error) {
    await context.error(`${error}\n\ncommand: broadcast`, error)
   }
